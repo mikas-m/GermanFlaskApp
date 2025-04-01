@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('insert') }}">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="card bg-dark text-white shadow-lg animate__animated animate__fadeInDown" style="width: 25rem;">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-5">einfügung des Wortes</h3>
+                <div class="mb-4 user-input">
+                    <input type="text" class="form-control" placeholder="dein Wort" id="user_word" name="user_word">
+                </div>
+                <div class="mb-4 user-input">
+                    <input type="text" class="form-control" placeholder="deutsch Wort" id="german_word" name="german_word">
+                </div>
+                <div class="d-grid text-center">
+                    <button type="submit" class="btn btn-outline-info" id="insert_words">einfügen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

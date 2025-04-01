@@ -1,0 +1,13 @@
+DICTIONARY {
+	#- nakon mijenjanja tablice, ikona tog html-a nije više žuta i veća nego kad je neaktivna
+	- funkcija za izbrisati red
+}
+
+CHECKUP {
+}
+
+IRREGULAR {
+}
+
+NOTES {
+}

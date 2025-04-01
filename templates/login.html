@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card bg-dark text-white shadow-lg animate__animated animate__fadeInDown" style="width: 25rem;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-5">der Anfang</h3>
+            <form method="POST" action="{{ url_for('login') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-4">
+                    {{ form.username(class="form-control", id="username", required=True, placeholder="username") }}
+                </div>
+                <div class="mb-4">
+                    {{ form.password(class="form-control", id="password", required=True, placeholder="password") }}
+                </div>
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-outline-info") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

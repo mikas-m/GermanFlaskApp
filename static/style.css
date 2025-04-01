@@ -1,0 +1,222 @@
+/* login */
+.btn-gradient {
+  position: relative;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: white;
+  background: black;
+  border-radius: 8px;
+  border: None;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.btn-gradient::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(130deg, rgb(4, 134, 87), rgb(255, 138, 4), rgb(124, 1, 42));
+  background-size: 400%;
+  z-index: -1;
+  animation: moveBorder 2s linear infinite;
+}
+
+.btn-gradient::after {
+  content: "";
+  position: absolute;
+  background: black;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+@keyframes moveBorder {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* logout */
+.icon-log-out {
+  position: fixed;
+  margin-left: 93.5%;
+  font-size: 20px;
+  color:#e3e5e7;
+}
+
+
+/* navbar */
+.curved-navbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  background: #212529;
+  padding: 15px 0;
+  border-radius: 50px;
+  clip-path: ellipse(70% 100% at 50% 100%);
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.icon-link {
+  font-size: 30px;
+  color: #ffffffad;
+  margin-top: 2px;
+  margin-bottom: 15px;
+}
+
+.icon-link:nth-child(1) { transform: translateY(12px); }
+.icon-link:nth-child(2) { transform: translateY(6px); }
+.icon-link:nth-child(3) { transform: translateY(1px); }
+.icon-link:nth-child(4) { transform: translateY(6px); }
+.icon-link:nth-child(5) { transform: translateY(12px); }
+
+.active-icon {
+  color: #fce300 !important;
+  font-size: 35px;
+  margin-bottom: 2vh;
+}
+
+.icon-text {
+  margin-bottom: 55vh;
+  font-size: 10px;
+  color:#84e9c25b;
+  margin-top: 10px;
+}
+
+
+/* search input */
+.input-search {
+  width: 95%;
+  align-self: center;
+  margin-top: 9%;
+  border-color:rgb(47, 152, 201);
+  background-color: #212529;
+  color: rgb(255, 255, 255);
+  border-width: 2%;
+  vertical-align:middle;
+  outline: None;
+  height: 40px;
+  position: fixed;
+}
+
+.input-search::placeholder {  
+  color:#edeeee7e;
+  vertical-align:middle;
+}
+
+.input-search:focus {
+  border-radius: 2%;
+  border-color:#ffff00;
+  background-color: #2125296d;
+}
+
+
+/* table */
+.form-dictionary {
+  width: 95%;
+  align-self: center;
+  margin-top: 21%;
+}
+
+.table-dictionary {
+  border-radius: 12px;
+  overflow: hidden;
+  table-layout: fixed;
+  gap: 10px;
+}
+
+.table-dictionary th, td:focus {
+  outline: none;
+  border-radius: 2% !important;
+  border-color: #ffff00;
+}
+
+.table-dictionary td div{
+  overflow-x: auto;
+}
+
+.table-dictionary thead {
+  display: block;
+}
+
+.table-dictionary tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 700px;
+}
+
+.table-dictionary tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table-dictionary th:first-child, td:first-child {
+  width: 10% !important;
+}
+
+thead th:last-child {
+  border-right: None !important; 
+}
+
+thead th {
+  border-right: 1.5px solid rgb(47, 152, 201) !important;
+  border-bottom: 1.5px solid rgb(47, 152, 201) !important;
+  color: #ffffff !important;
+  text-align: center !important;
+}
+
+thead tr {
+  border-bottom: 1px solid rgb(47, 152, 201) !important;
+  font-size: 100%;
+}
+
+tbody td { 
+  border-right: 1px solid rgb(47, 152, 201) !important; 
+} 
+
+tbody td {
+  font-size: 80%;
+}
+
+tbody td:first-child {
+  text-align: center !important;
+}
+
+tbody td:last-child {
+  border-right: None !important;
+}
+
+tbody tr:last-child {
+  border-bottom: none !important;
+}
+
+.btn-delete {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/*
+let touchstartx = 0;
+let touchendx = 0;
+
+function check_direction() {
+    if (touchendx < touchstartx)
+        document.getElementsByClassName("button-alert")[0].click();
+    if (touchendx > touchstartx)
+        document.getElementsByClassName("button-alert")[1].click();
+}
+
+var bb = document.getElementById("blue-bar");
+
+bb.addEventListener("touchstart", (e) => {
+    touchstartx = e.changedTouches[0].screenX;
+});
+bb.addEventListener("touchend", (e) => {
+    touchendx = e.changedTouches[0].screenX;
+    check_direction();
+});
