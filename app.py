@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, url_for, redirect, flash, request
+from sqlalchemy.sql import func
+from flask import Flask, render_template, url_for, redirect, flash, request, jsonify
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -23,11 +24,19 @@ class User(UserMixin, SQLModel, table=True):
     password: str = Field(nullable=False, max_length=50)
 
 
-class Words(UserMixin, SQLModel, table=True):
+class GermanWords(UserMixin, SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="user.id")
-    user_word: str = Field(nullable=False, max_length=100)
     german_word: str = Field(nullable=False, max_length=100)
+    german_translated_word: str = Field(nullable=False, max_length=100)
+    
+
+class SchweizWords(UserMixin, SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    schweiz_word: str = Field(nullable=False, max_length=100)
+    schweiz_translated_word: str = Field(nullable=False, max_length=100)
+
 
 
 SQLModel.metadata.create_all(engine)
@@ -57,7 +66,6 @@ def login():
             if user:
                 if check_password_hash(user.password, password):
                     login_user(user)
-                    flash("Login successful!", "success")
                     return redirect(url_for("insert"))
                 else:
                     flash("Invalid password.", "danger")
@@ -92,12 +100,12 @@ def load_user(user_id):
 @login_required
 def insert():
     if request.method == "POST":
-        user_word = request.form['user_word']
+        german_translated_word = request.form['german_translated_word']
         german_word = request.form['german_word']
 
-        if user_word and german_word:
+        if german_translated_word and german_word:
             with Session(engine) as session:
-                new_word = Words(user_id=current_user.id, user_word=user_word, german_word=german_word)
+                new_word = GermanWords(user_id=current_user.id, german_translated_word=german_translated_word, german_word=german_word)
                 try:
                     session.add(new_word)
                     session.commit()
@@ -108,6 +116,7 @@ def insert():
             return render_template('insert.html')
         
     return render_template('insert.html')
+
 
 @app.route("/dictionary", methods=["GET", "POST"])
 @login_required
@@ -120,22 +129,22 @@ def dictionary():
                 if key.startswith("german_word"):
                     word_id = key.split("_")[-1]
                     new_german_word = request.form.get(f"german_word_{word_id}")
-                    new_user_word = request.form.get(f"user_word_{word_id}")
+                    new_user_word = request.form.get(f"german_translated_word_{word_id}")
 
                     old_word = session.exec(
-                        select(Words).where(Words.user_id == user_id, Words.id == word_id)
+                        select(GermanWords).where(GermanWords.user_id == user_id, GermanWords.id == word_id)
                     ).first()
 
                     if old_word:
                         if new_german_word != old_word.german_word:
                             old_word.german_word = new_german_word
-                        if new_user_word != old_word.user_word:
-                            old_word.user_word = new_user_word
+                        if new_user_word != old_word.german_translated_word:
+                            old_word.german_translated_word = new_user_word
 
             session.commit()
-            return redirect(url_for("dictionary"))  # Redirect to avoid form resubmission
+            return redirect(url_for("dictionary"))
 
-        words = session.exec(select(Words).where(Words.user_id == user_id)).all()
+        words = session.exec(select(GermanWords).where(GermanWords.user_id == user_id)).all()
         return render_template('dictionary.html', words=words)
 
 
@@ -144,6 +153,7 @@ def dictionary():
 @login_required
 def checkup():
     return render_template('checkup.html')
+
 
 
 @app.route("/irregular", methods= ["GET", "POST"])
@@ -156,6 +166,12 @@ def irregular():
 @login_required
 def notes():
     return render_template('notes.html')
+
+
+@app.route("/schweiz", methods= ["GET", "POST"])
+@login_required
+def schweiz():
+    return render_template('schweiz.html')
 
 
 

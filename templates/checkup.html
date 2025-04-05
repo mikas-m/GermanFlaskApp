@@ -1,1 +1,41 @@
 {% extends "base.html" %}
+
+{% block content %}
+<div class="col-12 col-md-6 container">
+    <div class="row">
+        <div class="generated-card checkup-generated float-center card w-75 mb-2">
+            <div class="card-body text-center">
+                <h5>{{ generated_word }}</h5>
+            </div>
+        </div>
+
+        <div class="align-items-center">
+            <input class="input checkup-input rounded-2 mb-2"></input>
+            <input type="checkbox" class="form-check-input generated-checkbox" id="generated-checkbox" autocomplete="off">
+        </div>
+
+        <div class="mb-2 text-center">
+            <button class="btn generate-german rounded-2" type="submit" id="generate-german" onclick="generate_german_word()">deutsches Wort</button>
+            <button class="btn generate-translated rounded-2" type="submit" id="generate-translated" onclick="generate_translation()">übersetztes Wort</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generate_german_word() {
+        fetch("/checkup/generate_german_word")
+            .then(response => response.json())
+            .then(generated_word => {
+                document.querySelector('.generated-card h5').textContent = generated_word;
+            })
+    }
+
+    function generate_translation() {
+        fetch("/checkup/generate_german_word")
+            .then(response => response.json())
+            .then(generated_word => {
+                document.querySelector('.generated-card h5').textContent = generated_word;
+            })
+    }
+</script>
+{% endblock %}

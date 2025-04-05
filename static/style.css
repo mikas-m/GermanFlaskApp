@@ -1,10 +1,42 @@
+.btn {
+  background-color: #000000 !important;
+  color: #ffffff;
+  border: none !important;
+  box-shadow: 2px 2px rgb(47, 152, 201);
+}
+
+.btn:hover {
+  background-color: #ffffff !important;
+  color: #000000;
+  box-shadow: 2px 2px rgb(0, 0, 0);
+}
+
+
+.input {
+  align-self: center;
+  border-color:rgb(47, 152, 201);
+  background-color: #212529;
+  color: rgb(255, 255, 255);
+  border-width: 1%;
+  vertical-align:middle;
+  outline: None;
+  position: fixed;
+}
+
+.input:focus {
+  border-radius: 1%;
+  border-color:#ffff00;
+  background-color: #2125296d;
+  box-shadow: 1px 1px #ffff00;
+}
+
 /* login */
 .btn-gradient {
   position: relative;
   padding: 10px 20px;
   font-weight: bold;
   color: white;
-  background: black;
+  background: rgb(0, 0, 0);
   border-radius: 8px;
   border: None;
   z-index: 1;
@@ -25,7 +57,7 @@
 .btn-gradient::after {
   content: "";
   position: absolute;
-  background: black;
+  background: rgb(146, 8, 8);
   border-radius: inherit;
   z-index: -1;
 }
@@ -34,6 +66,7 @@
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
 }
+
 
 /* logout */
 .icon-log-out {
@@ -59,56 +92,36 @@
 }
 
 .icon-link {
-  font-size: 30px;
+  font-size: 28px;
   color: #ffffffad;
   margin-top: 2px;
   margin-bottom: 15px;
 }
 
-.icon-link:nth-child(1) { transform: translateY(12px); }
+.icon-link:nth-child(1) { transform: translateY(12px); margin-left: 4%;}
 .icon-link:nth-child(2) { transform: translateY(6px); }
 .icon-link:nth-child(3) { transform: translateY(1px); }
-.icon-link:nth-child(4) { transform: translateY(6px); }
-.icon-link:nth-child(5) { transform: translateY(12px); }
+.icon-link:nth-child(4) { transform: translateY(1px); }
+.icon-link:nth-child(5) { transform: translateY(6px); }
+.icon-link:nth-child(6) { transform: translateY(12px); margin-right: 4%;}
 
 .active-icon {
   color: #fce300 !important;
-  font-size: 35px;
+  font-size: 36px;
   margin-bottom: 2vh;
-}
-
-.icon-text {
-  margin-bottom: 55vh;
-  font-size: 10px;
-  color:#84e9c25b;
-  margin-top: 10px;
 }
 
 
 /* search input */
-.input-search {
+.input-search{
   width: 95%;
-  align-self: center;
   margin-top: 9%;
-  border-color:rgb(47, 152, 201);
-  background-color: #212529;
-  color: rgb(255, 255, 255);
-  border-width: 2%;
-  vertical-align:middle;
-  outline: None;
   height: 40px;
-  position: fixed;
 }
 
 .input-search::placeholder {  
   color:#edeeee7e;
   vertical-align:middle;
-}
-
-.input-search:focus {
-  border-radius: 2%;
-  border-color:#ffff00;
-  background-color: #2125296d;
 }
 
 
@@ -124,6 +137,7 @@
   overflow: hidden;
   table-layout: fixed;
   gap: 10px;
+  box-shadow: 2px 2px rgb(47, 152, 201);
 }
 
 .table-dictionary th, td:focus {
@@ -188,10 +202,6 @@ tbody td:last-child {
   border-right: None !important;
 }
 
-tbody tr:last-child {
-  border-bottom: none !important;
-}
-
 .btn-delete {
   background-color: red;
   color: white;
@@ -199,6 +209,65 @@ tbody tr:last-child {
   padding: 5px 10px;
   cursor: pointer;
 }
+
+
+/* checkup */
+.checkup-input {
+  width: 75%;
+  margin-top: 20%;
+  margin-left: 10%;
+  height: 4%;
+  box-shadow: 1px 1px rgb(47, 152, 201);
+}
+
+.checkup-input:focus {
+  border-radius: 1%;
+  border-color:#ffff00;
+  background-color: #212529c7;
+  box-shadow: 1px 1px #ffff00;
+}
+
+.checkup-generated {
+  margin-left: 13%;
+  background-color: #ffffff;
+}
+
+.generate-german{
+  width: 40%;
+  margin-top: 20%; 
+}
+
+.generate-translated{
+  width: 40%;
+  margin-top: 20%;
+}
+
+.generated-card {
+  margin-top: 20%;
+  box-shadow: 1px 1px rgb(0, 0, 0);
+  height: 10%;
+  border: none !important;
+}
+
+.generated-checkbox {
+  margin-top: 24%;
+  margin-left: 93%;
+  width: 2vh !important;
+  height: 2vh !important;
+  box-shadow: 1px 1px rgb(0, 0, 0) !important;
+  border: none !important;
+}
+
+.generated-checkbox:checked {
+  background-color: #000000 !important;
+  box-shadow: 1px 1px rgb(255, 255, 255) !important;
+}
+
+.generated-checkbox:checked:after {
+  box-shadow: 1px 1px rgb(0, 0, 0) !important;
+}
+
+
 
 /*
 let touchstartx = 0;
@@ -220,3 +289,5 @@ bb.addEventListener("touchend", (e) => {
     touchendx = e.changedTouches[0].screenX;
     check_direction();
 });
+
+
