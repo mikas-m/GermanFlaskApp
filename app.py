@@ -155,6 +155,45 @@ def checkup():
     return render_template('checkup.html')
 
 
+@app.route("/checkup/generate_word", methods=["POST"])
+@login_required
+def generate_word():
+    user_id = current_user.id
+    function = request.json.get('word_type')
+    print(f"Function: {function}")
+
+    with Session(engine) as session:
+        generated_word = None
+
+        if function == "generate-german":
+            generated_word = session.exec(
+                select(GermanWords.german_word)
+                .where(GermanWords.user_id == user_id)
+                .order_by(func.random())
+                .limit(1)
+            ).first()
+
+        if function == "generate-translation":
+            generated_word = session.exec(
+                select(GermanWords.german_translated_word)
+                .where(GermanWords.user_id == user_id)
+                .order_by(func.random())
+                .limit(1)
+            ).first()
+
+        if generated_word:
+            return jsonify(generated_word=generated_word)
+        else:
+            return jsonify(generated_word="Dude -.-")
+
+
+
+
+@app.route("/checkup/show_translation", methods=["POST", "GET"])
+@login_required
+def show_translation():
+    pass
+
 
 @app.route("/irregular", methods= ["GET", "POST"])
 @login_required

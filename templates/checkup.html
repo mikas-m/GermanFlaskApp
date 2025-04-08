@@ -4,8 +4,8 @@
 <div class="col-12 col-md-6 container">
     <div class="row">
         <div class="generated-card checkup-generated float-center card w-75 mb-2">
-            <div class="card-body text-center">
-                <h5>{{ generated_word }}</h5>
+            <div class="card-body text-center ">
+                <h6>{{ generated_word }}</h6>
             </div>
         </div>
 
@@ -15,27 +15,38 @@
         </div>
 
         <div class="mb-2 text-center">
-            <button class="btn generate-german rounded-2" type="submit" id="generate-german" onclick="generate_german_word()">deutsches Wort</button>
-            <button class="btn generate-translated rounded-2" type="submit" id="generate-translated" onclick="generate_translation()">übersetztes Wort</button>
+            <button class="btn generate-german rounded-2" type="submit" id="generate-german" onclick="generate_word(this.id)">deutsches Wort</button>
+            <button class="btn generate-translated rounded-2" type="submit" id="generate-translated" onclick="generate_word(this.id)">übersetztes Wort</button>
         </div>
     </div>
 </div>
 
 <script>
-    function generate_german_word() {
-        fetch("/checkup/generate_german_word")
-            .then(response => response.json())
-            .then(generated_word => {
-                document.querySelector('.generated-card h5').textContent = generated_word;
-            })
+    function generate_word(button_id) {
+        const word_type = button_id === 'generate-german' ? 'generate-german' : 'generate-translation';
+
+        fetch("/checkup/generate_word", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'word_type': word_type })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.generated-card h6').textContent = data.generated_word;
+        });
     }
 
-    function generate_translation() {
-        fetch("/checkup/generate_german_word")
-            .then(response => response.json())
-            .then(generated_word => {
-                document.querySelector('.generated-card h5').textContent = generated_word;
-            })
-    }
+
+    function show_translation() {
+        document.getElementById('generated-checkbox').addEventListener('change', function() {
+            if (this.checked) {
+                document.querySelector('.generated-card h6').textContent = '{{ generated_word }}';
+            } else {
+                document.querySelector('.generated-card h6').textContent = '{{ translated_word }}';
+            }
+        }
+    )};
 </script>
 {% endblock %}
