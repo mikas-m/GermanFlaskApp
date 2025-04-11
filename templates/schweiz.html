@@ -1,17 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <input class="input checkup-input rounded-2 mb-2" placeholder="švicarska riječ" style="margin-top: 10%";></input>
-    <input class="input checkup-input rounded-2 mb-2" placeholder="prijevod" style="margin-top: 20%";></input>
-    <button class="btn rounded-2 d-block mx-auto" style="margin-top: 35%;">umetni</button>
-    <input class="input checkup-input rounded-2 mb-2" placeholder="tražilica"></input>
-    <form class="form-dictionary mb-5" style="margin-top: 33%" method="POST" action="{{ url_for('dictionary') }}">
+<div class="col-12 col-md-6 container">
+
+    <div class="w-100 mb-1 d-flex justify-content-center align-items-center" style="min-height: 35vh;">
+        <form method="POST" action="{{ url_for('schweiz_insert') }}">
+            <div class="card-body">
+                <div class="user-input-div">
+                    <small id="schweiz_word_help" class="form-text text-muted">schweizes Wort</small>
+                    <input type="text" class="form-control user-input mb-2" id="schweiz_word" name="schweiz_word">
+                </div>
+                <div class="user-input-div row mb-4">
+                    <div class="col-6">
+                        <small id="schweiz_translated_german_word_help" class="form-text text-muted">deutsche übersetzung</small>
+                        <input type="text" class="form-control user-input mb-2" id="schweiz_translated_german_word" name="schweiz_translated_german_word">
+                    </div>
+                    <div class="col-6">
+                        <small id="schweiz_translated_word_help" class="form-text text-muted">übersetzung</small>
+                        <input type="text" class="form-control user-input mb-2" id="schweiz_translated_word" name="schweiz_translated_word">
+                    </div>
+                </div>
+                
+                <div class="d-grid text-center">
+                    <button type="submit" class="btn btn-outline-info" id="insert_words">einfügen</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <input class="input input-search rounded-2 mb-4" type="text" placeholder="suche nach dem Wort" id="search_input_text" oninput="filter_words()"></input>
+
+    <form class="col-12 col-md-6 form-dictionary w-100" method="POST" action="{{ url_for('schweiz_dictionary') }}">
         <table class="table table-dark table-dictionary">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>deutches Wort</th>
+                    <th>schweizes Wort</th>
+                    <th>deutche übersetzung</th>
                     <th>übersetzung</th>
                 </tr>
             </thead>
@@ -19,19 +44,46 @@
                 {% for word in words %}
                 <tr class="word_row">
                     <td>{{ word.id }}</td>
-                    <td contenteditable="true" onblur="update_value_in_dictionary(this, 'german_word_{{ word.id }}')" onclick="delete_from_dictionary()">
-                        <div>{{ word.german_word }}</div>
-                        <input type="hidden" name="german_word_{{ word.id }}" value="{{ word.german_word }}">
+                    <td contenteditable="true" onblur="update_value_in_dictionary(this, 'schweiz_word_{{ word.id }}')" onclick="delete_from_dictionary()">
+                        <div>{{ word.schweiz_word }}</div>
+                        <input type="hidden" name="schweiz_word_{{ word.id }}" value="{{ word.schweiz_word }}">
                     </td>
-                    <td contenteditable="true" onblur="update_value_in_dictionary(this, 'user_word_{{ word.id }}')">
-                        <div>{{ word.user_word }}</div>
-                        <input type="hidden" name="user_word_{{ word.id }}" value="{{ word.user_word }}">
+                    <td contenteditable="true" onblur="update_value_in_dictionary(this, 'schweiz_translated_german_word_{{ word.id }}')">
+                        <div>{{ word.schweiz_translated_german_word }}</div>
+                        <input type="hidden" name="schweiz_translated_german_word_{{ word.id }}" value="{{ word.schweiz_translated_german_word }}">
+                    </td>
+                    <td contenteditable="true" onblur="update_value_in_dictionary(this, 'schweiz_translated_word_{{ word.id }}')">
+                        <div>{{ word.schweiz_translated_word }}</div>
+                        <input type="hidden" name="schweiz_translated_word_{{ word.id }}" value="{{ word.schweiz_translated_word }}">
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </form>
-</div>
 
+<script>
+    function update_value_in_dictionary(element, inputName) {
+        let hiddenInput = document.querySelector(`input[name='${inputName}']`);
+        hiddenInput.value = element.innerText.trim();
+        document.querySelector('.form-dictionary').submit();       
+    }
+
+    function filter_words() {
+        let input = document.querySelector('#search_input_text');
+        let filter = input.value.toLowerCase();
+        
+        let rows = document.querySelectorAll('.word_row');
+        
+        rows.forEach(row => {
+            let schweiz_word = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
+
+            if (schweiz_word.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
 {% endblock %}

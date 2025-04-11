@@ -30,6 +30,31 @@
   box-shadow: 1px 1px #ffff00;
 }
 
+.user-input {
+  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2));
+  color: white;
+  border: none !important;
+  box-shadow: 1px 1px rgb(255, 255, 255);
+}
+
+.user-input:focus {
+  background-color: #000000ad;
+  color: white;
+  border: none !important;
+  box-shadow: 1px 1px rgb(255, 255, 255);
+}
+
+.form-text {
+  font-size: 0.775rem;
+  color: #ffffff !important;
+}
+
+.form-control::placeholder {
+  color: #ffffff !important;
+  opacity: 0.5;
+
+}
+
 /* login */
 .btn-gradient {
   position: relative;
@@ -132,6 +157,7 @@
   margin-top: 21%;
 }
 
+
 .table-dictionary {
   border-radius: 12px;
   overflow: hidden;
@@ -212,9 +238,37 @@ tbody td:last-child {
 
 
 /* checkup */
+.checkup-generated {
+  margin-left: 13%;
+  background-color: #ffffff;
+  margin-top: 20%;
+  box-shadow: 1px 1px rgb(0, 0, 0);
+  border: none !important;
+  height: 15vh;
+}
+
+.correct {
+  animation: correct_anim 1s ease-in-out;
+}
+
+.checkup-generated.clicked{
+  .correct-translation {
+    color: #000000;
+  }
+}
+
+.generated-word {
+  border-radius: 2vh;
+  border-color: #000000;
+}
+
+.correct-translation {
+  color:#ffffff;
+}
+
 .checkup-input {
   width: 75%;
-  margin-top: 20%;
+  margin-top: 10%;
   margin-left: 10%;
   height: 4%;
   box-shadow: 1px 1px rgb(47, 152, 201);
@@ -227,11 +281,6 @@ tbody td:last-child {
   box-shadow: 1px 1px #ffff00;
 }
 
-.checkup-generated {
-  margin-left: 13%;
-  background-color: #ffffff;
-}
-
 .generate-german{
   width: 40%;
   margin-top: 20%; 
@@ -242,29 +291,14 @@ tbody td:last-child {
   margin-top: 20%;
 }
 
-.generated-card {
-  margin-top: 20%;
-  box-shadow: 1px 1px rgb(0, 0, 0);
-  border: none !important;
-  height: 10vh;
+
+.correct {
+  animation: glow 0.8s ease-out;
 }
 
-.generated-checkbox {
-  margin-top: 24%;
-  margin-left: 93%;
-  width: 2vh !important;
-  height: 2vh !important;
-  box-shadow: 1px 1px rgb(0, 0, 0) !important;
-  border: none !important;
-}
-
-.generated-checkbox:checked {
-  background-color: #000000 !important;
-  box-shadow: 1px 1px rgb(255, 255, 255) !important;
-}
-
-.generated-checkbox:checked:after {
-  box-shadow: 1px 1px rgb(0, 0, 0) !important;
+@keyframes glow {
+  0% { box-shadow: 0 0 10px 4px #00ff88; }
+  100% { box-shadow: 0 0 0px 0px transparent; }
 }
 
 

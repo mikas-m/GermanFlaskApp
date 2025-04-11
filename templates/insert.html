@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form method="POST" action="{{ url_for('insert') }}">
-    <div class="col-12 col-md-6 container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-        <div class="card bg-dark text-white shadow-lg animate__animated animate__fadeInDown" style="width: 25rem;">
+<div class="col-12 col-md-6 container ">
+    <div class="w-100 mb-1 d-flex justify-content-center align-items-center" style="min-height: 35vh;">
+        <form method="POST" action="{{ url_for('insert') }}">
             <div class="card-body">
-                <h3 class="card-title text-center mb-5">einfügung des Wortes</h3>
-                <div class="mb-4 user-input">
-                <div class="mb-4 user-input">
-                    <input type="text" class="form-control" placeholder="deutsches Wort" id="german_word" name="german_word">
+                <div class="user-input-div row w-100 mb-4">
+                    <small id="german_word_help" class="form-text text-muted">deutches Wort</small>
+                    <input type="text" class="form-control user-input mb-2" id="german_word" name="german_word">
                 </div>
-                    <input type="text" class="form-control" placeholder="übersetztes Wort" id="german_translated_word" name="german_translated_word">
+                <div class="user-input-div row mb-4 w-100">
+                    <small id="german_translated_word_help" class="form-text text-muted">die übersetzung</small>
+                    <input type="text" class="form-control user-input mb-2" id="german_translated_word" name="german_translated_word">
                 </div>
-                <div class="d-grid text-center">
+                <div class="d-grid text-center row mb-4 w-100">
                     <button type="submit" class="btn btn-outline-info" id="insert_words">einfügen</button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-</form>
+</div>
 {% endblock %}
+

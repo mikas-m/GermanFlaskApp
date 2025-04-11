@@ -3,23 +3,24 @@
 {% block content %}
 <div class="col-12 col-md-6 container">
     <div class="row">
-        <div class="generated-card checkup-generated float-center card w-75 mb-2">
-            <div class="card-body text-center ">
-                <h6>{{ generated_word }}</h6>
+        <div class="generated-card checkup-generated float-center card w-75 mb-5">
+            <div class="card-body text-center mb-2">
+                <h6 class="generated-word mb-5">{{ generated_word }}</h6>
+                <h6 class="correct-translation">{{ correct_translation }}</h6>
             </div>
         </div>
 
-        <div class="align-items-center">
-            <input class="input checkup-input rounded-2 mb-2"></input>
-            <input type="checkbox" class="form-check-input generated-checkbox" id="generated-checkbox" autocomplete="off">
+        <div>
+            <input class="form-control user-input" placeholder="deine Antwort...oder klicken Sie auf die Karte" oninput="check_translation"></input>
         </div>
 
-        <div class="mb-2 text-center">
+        <div class="text-center">
             <button class="btn generate-german rounded-2" type="submit" id="generate-german" onclick="generate_word(this.id)">deutsches Wort</button>
             <button class="btn generate-translated rounded-2" type="submit" id="generate-translated" onclick="generate_word(this.id)">übersetztes Wort</button>
         </div>
     </div>
 </div>
+
 
 <script>
     function generate_word(button_id) {
@@ -34,19 +35,27 @@
         })
         .then(response => response.json())
         .then(data => {
-            document.querySelector('.generated-card h6').textContent = data.generated_word;
+            document.querySelector('.generated-word').textContent = data.generated_word;
+            document.querySelector('.correct-translation').textContent = data.correct_translation;
         });
     }
 
+    document.querySelector('.generated-card').addEventListener('click', function() {
+        this.classList.toggle('clicked');
+    });
 
-    function show_translation() {
-        document.getElementById('generated-checkbox').addEventListener('change', function() {
-            if (this.checked) {
-                document.querySelector('.generated-card h6').textContent = '{{ generated_word }}';
-            } else {
-                document.querySelector('.generated-card h6').textContent = '{{ translated_word }}';
-            }
+    function check_translation(){
+        let word_to_check = document.querySelector('.generated-word').textContent;
+        let correct_translation = document.querySelector('.correct-translation').textContent;
+        let user_input = document.querySelector('.checkup-input').value.trim();
+
+        if (user_input === correct_translation) {
+            document.querySelector('.generated-card').classList.add('correct');
+            document.querySelector('.generated-card').classList.remove('clicked');
+            document.querySelector('.checkup-input').value = '';
+        } else {
+            document.querySelector('.generated-card').classList.remove('correct');
         }
-    )};
+    }
 </script>
 {% endblock %}

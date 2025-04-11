@@ -1,4 +1,4 @@
 .env
-what_to_change.txt
+to_do.txt
 __pycache__/
 GermanFlask.sqlite
