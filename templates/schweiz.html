@@ -3,7 +3,7 @@
 {% block content %}
 <div class="col-12 col-md-6 container">
 
-    <div class="w-100 mb-1 d-flex justify-content-center align-items-center" style="min-height: 35vh;">
+    <div class="w-100 d-flex justify-content-center align-items-center" style="min-height: 35vh;">
         <form method="POST" action="{{ url_for('schweiz_insert') }}">
             <div class="card-body">
                 <div class="user-input-div">
@@ -28,7 +28,7 @@
         </form>
     </div>
 
-    <input class="input input-search rounded-2 mb-4" type="text" placeholder="suche nach dem Wort" id="search_input_text" oninput="filter_words()"></input>
+    <input class="form-control input input-search rounded-2 mb-2 w-100" type="text" placeholder="suche nach dem Wort" id="search_input_text" oninput="filter_words()"></input>
 
     <form class="col-12 col-md-6 form-dictionary w-100" method="POST" action="{{ url_for('schweiz_dictionary') }}">
         <table class="table table-dark table-dictionary">
@@ -64,8 +64,8 @@
 
 <script>
     function update_value_in_dictionary(element, inputName) {
-        let hiddenInput = document.querySelector(`input[name='${inputName}']`);
-        hiddenInput.value = element.innerText.trim();
+        let hidden_input = document.querySelector(`input[name='${inputName}']`);
+        hidden_input.value = element.innerText.trim();
         document.querySelector('.form-dictionary').submit();       
     }
 
@@ -77,8 +77,10 @@
         
         rows.forEach(row => {
             let schweiz_word = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
+            let german_word = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
+            let translated_word = row.querySelector('td:nth-child(4)').innerText.toLowerCase();
 
-            if (schweiz_word.includes(filter)) {
+            if (schweiz_word.includes(filter) || german_word.includes(filter) || translated_word.includes(filter)) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';

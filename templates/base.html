@@ -30,7 +30,7 @@
                 <i class="bi bi-pen"></i>
             </a>
             <a class="icon-link {% if request.endpoint == 'dictionary' %}active-icon{% endif %}" href="{{ url_for('dictionary') }}">
-                <i class="bi bi-file-spreadsheet"></i>
+                <i class="bi bi-table"></i>
             </a>
             <a class="icon-link {% if request.endpoint == 'checkup' %}active-icon{% endif %}" href="{{ url_for('checkup') }}">
                 <i class="bi bi-journal-check"></i>
@@ -42,7 +42,7 @@
                 <i class="bi bi-journals"></i>
             </a>
             <a class="icon-link {% if request.endpoint == 'schweiz' %}active-icon{% endif %}" href="{{ url_for('schweiz') }}">
-                <i class="bi bi-plus-square" fill="red"></i>
+                <i class="bi bi-shield-plus" fill="red"></i>
             </a>
         </div>
     </nav>

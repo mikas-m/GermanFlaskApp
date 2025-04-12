@@ -20,18 +20,22 @@
   border-width: 1%;
   vertical-align:middle;
   outline: None;
-  position: fixed;
 }
 
 .input:focus {
+  color: white;
   border-radius: 1%;
   border-color:#ffff00;
   background-color: #2125296d;
   box-shadow: 1px 1px #ffff00;
 }
 
+.input-form {
+  margin-top: 10vh;
+}
+
 .user-input {
-  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2));
+  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.4));
   color: white;
   border: none !important;
   box-shadow: 1px 1px rgb(255, 255, 255);
@@ -52,7 +56,6 @@
 .form-control::placeholder {
   color: #ffffff !important;
   opacity: 0.5;
-
 }
 
 /* login */
@@ -140,7 +143,7 @@
 /* search input */
 .input-search{
   width: 95%;
-  margin-top: 9%;
+  margin-top: 10%;
   height: 40px;
 }
 
@@ -154,7 +157,7 @@
 .form-dictionary {
   width: 95%;
   align-self: center;
-  margin-top: 21%;
+
 }
 
 

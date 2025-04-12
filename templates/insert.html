@@ -1,24 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="col-12 col-md-6 container ">
-    <div class="w-100 mb-1 d-flex justify-content-center align-items-center" style="min-height: 35vh;">
-        <form method="POST" action="{{ url_for('insert') }}">
-            <div class="card-body">
-                <div class="user-input-div row w-100 mb-4">
-                    <small id="german_word_help" class="form-text text-muted">deutches Wort</small>
-                    <input type="text" class="form-control user-input mb-2" id="german_word" name="german_word">
-                </div>
-                <div class="user-input-div row mb-4 w-100">
-                    <small id="german_translated_word_help" class="form-text text-muted">die übersetzung</small>
-                    <input type="text" class="form-control user-input mb-2" id="german_translated_word" name="german_translated_word">
-                </div>
-                <div class="d-grid text-center row mb-4 w-100">
-                    <button type="submit" class="btn btn-outline-info" id="insert_words">einfügen</button>
-                </div>
+<div class="col-12 col-md-6 container w-100">
+    <form method="POST" action="{{ url_for('insert') }}" class="input-form w-95">
+        <div class="card-body">
+            <div class="user-input-div mb-3 w-100">
+                <small id="german_word_help" class="form-text text-muted">deutches Wort</small>
+                <input type="text" class="form-control user-input mb-2" id="german_word" name="german_word">
             </div>
-        </form>
-    </div>
+            <div class="user-input-div mb-5 w-100">
+                <small id="german_translated_word_help" class="form-text text-muted">die übersetzung</small>
+                <input type="text" class="form-control user-input mb-2" id="german_translated_word" name="german_translated_word">
+            </div>
+            <div class="d-grid text-center w-100">
+                <button type="submit" class="btn btn-outline-info" id="insert_words">einfügen</button>
+            </div>
+        </div>
+    </form>
 </div>
 {% endblock %}
 

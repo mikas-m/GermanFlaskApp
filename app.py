@@ -51,32 +51,35 @@ login_manager.login_view = 'login'
 login_manager.init_app(app)
 
 #helper function
-def add_to_dictionary(html, first_word, new_form_word, new_form_translated_word, new_word_id, new_translated_word_id, table):
+def add_to_dictionary(route_name, html, table, first_form_word, second_form_word, first_form_word_id, second_form_word_id, third_form_word, third_form_word_id):
     with Session(engine) as session:
         user_id = current_user.id
 
         if request.method == "POST":
             for key in request.form:
-                if key.startswith(f"{new_word_id}"):
+                if key.startswith(f"{first_form_word_id}"):
                     word_id = key.split("_")[-1]
-                    new_word = request.form.get(f"{new_word_id}{word_id}")
-                    new_translated_word = request.form.get(f"{new_translated_word_id}{word_id}")
+                    new_first_word = request.form.get(f"{first_form_word_id}{word_id}")
+                    new_second_word = request.form.get(f"{second_form_word_id}{word_id}")
 
-                    # Update the existing word in the database
                     old_word = session.exec(
                         select(table).where(table.user_id == user_id, table.id == word_id)
                     ).first()
 
                     if old_word:
-                        if new_word != old_word.new_form_word:
-                            old_word.new_form_word = new_word
-                        if new_form_translated_word != old_word.new_form_translated_word:
-                            old_word.new_form_translated_word = new_form_translated_word
+                        if new_first_word != getattr(old_word, first_form_word):
+                            setattr(old_word, first_form_word, new_first_word)
+                        if new_second_word != getattr(old_word, second_form_word):
+                            setattr(old_word, second_form_word, new_second_word)
 
-            session.commit()
-            return redirect(url_for(f"{html}"))
+                        if third_form_word is not None and third_form_word_id is not None:
+                            new_third_word = request.form.get(f"{third_form_word_id}{word_id}")
+                            if new_third_word != getattr(old_word, third_form_word):
+                                setattr(old_word, third_form_word, new_third_word)
 
-        # Retrieve the words to display
+                session.commit()
+                return redirect(url_for(f"{route_name}"))
+    
         words = session.exec(select(table).where(table.user_id == user_id)).all()
         print(words)
         return render_template(html, words=words)
@@ -124,6 +127,7 @@ def load_user(user_id):
 
 
 
+
 #insert view
 @app.route("/insert", methods= ["GET", "POST"])
 @login_required
@@ -153,14 +157,17 @@ def insert():
 @login_required
 def dictionary():
     return add_to_dictionary(
+        route_name="dictionary",
         html="dictionary.html",
-        first_word="german_word",
-        new_form_word="german_word",
-        new_form_translated_word="german_translated_word",
-        new_word_id="german_word_",
-        new_translated_word_id="german_translated_word_",
-        table=GermanWords
+        table=GermanWords,
+        first_form_word="german_word",
+        second_form_word="german_translated_word",
+        first_form_word_id="german_word_",
+        second_form_word_id="german_translated_word_",
+        third_form_word=None,
+        third_form_word_id=None
     )
+
 
 
 
@@ -255,17 +262,16 @@ def schweiz_insert():
 @login_required
 def schweiz_dictionary():
     return add_to_dictionary(
-        html="schweiz.html",
-        first_word="schweiz_word",
-        new_form_word="schweiz_word",
-        new_form_translated_word="schweiz_translated_word",
-        new_word_id="schweiz_word_",
-        new_translated_word_id="schweiz_translated_word_",
-        table=SchweizWords
-    )
-
-
-
+            route_name="schweiz",
+            html="schweiz.html",
+            table=SchweizWords,
+            first_form_word="schweiz_word",
+            second_form_word="schweiz_translated_german_word",
+            first_form_word_id="schweiz_word_",
+            second_form_word_id="schweiz_translated_german_word_",
+            third_form_word="schweiz_translated_word",
+            third_form_word_id="schweiz_translated_word_"
+        )
 
 @app.route("/")
 def golden_gate():
