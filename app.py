@@ -1,5 +1,5 @@
 import os
-from sqlalchemy.sql import func, or_
+from sqlalchemy.sql import func
 from flask import Flask, render_template, url_for, redirect, flash, request, jsonify
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -24,9 +24,10 @@ class User(UserMixin, SQLModel, table=True):
     password: str = Field(nullable=False, max_length=50)
 
 
-class GermanWords(UserMixin, SQLModel, table=True):
+class GermanWords(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="user.id")
+    user_word_id: int = Field(default=None, max_length=50)
     german_word: str = Field(nullable=False, max_length=100)
     german_translated_word: str = Field(nullable=False, max_length=100)
 
@@ -41,9 +42,10 @@ class IrregularVerbs(SQLModel, table=True):
     translation: str = Field(nullable=False, max_length=50)
     
 
-class SchweizWords(UserMixin, SQLModel, table=True):
+class SchweizWords(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="user.id")
+    user_word_id: int = Field(default=None, max_length=50)
     schweiz_word: str = Field(nullable=False, max_length=100)
     schweiz_translated_german_word: str = Field(nullable=False, max_length=100)
     schweiz_translated_word: str = Field(nullable=False, max_length=100)
@@ -86,6 +88,8 @@ def add_to_dictionary(route_name, html, table, first_form_word, second_form_word
         user_id = current_user.id
 
         if request.method == "POST":
+            changes_made = False
+
             for key in request.form:
                 if key.startswith(f"{first_form_word_id}"):
                     word_id = key.split("_")[-1]
@@ -97,22 +101,34 @@ def add_to_dictionary(route_name, html, table, first_form_word, second_form_word
                     ).first()
 
                     if old_word:
+                        updated = False
                         if new_first_word != getattr(old_word, first_form_word):
                             setattr(old_word, first_form_word, new_first_word)
+                            updated = True
                         if new_second_word != getattr(old_word, second_form_word):
                             setattr(old_word, second_form_word, new_second_word)
+                            updated = True
 
                         if third_form_word is not None and third_form_word_id is not None:
                             new_third_word = request.form.get(f"{third_form_word_id}{word_id}")
                             if new_third_word != getattr(old_word, third_form_word):
                                 setattr(old_word, third_form_word, new_third_word)
+                                updated = True
 
+                        if updated:
+                            changes_made = True
+
+            if changes_made:
                 session.commit()
-                return redirect(url_for(f"{route_name}"))
-    
+
+            return redirect(url_for(f"{route_name}"))
+        
         words = session.exec(select(table).where(table.user_id == user_id)).all()
-        print(words)
         return render_template(html, words=words)
+
+
+
+
 
 
 #general
@@ -168,12 +184,18 @@ def insert():
 
         if german_translated_word and german_word:
             with Session(engine) as session:
-                new_word = GermanWords(user_id=current_user.id, german_translated_word=german_translated_word, german_word=german_word)
+                last_id = session.exec(select(GermanWords).where(GermanWords.user_id == current_user.id).order_by(GermanWords.user_word_id.desc())).first()
+                if last_id:
+                    last_id = last_id.id +1
+                else:
+                    last_id = 1
+
+                new_word = GermanWords(user_word_id=last_id, user_id=current_user.id, german_translated_word=german_translated_word, german_word=german_word)
                 try:
                     session.add(new_word)
                     session.commit()
                     return redirect(url_for("insert"))
-                except Exception as e:
+                except Exception:
                     return redirect(url_for("insert"))
         else:
             return render_template('insert.html')
@@ -234,7 +256,7 @@ def generate_word():
                 )
 
     return jsonify(
-        generated_word="Dude, you have no words in your dictionary!",
+        generated_word="-.-",
         correct_translation=""
     )
 
@@ -276,12 +298,17 @@ def schweiz_insert():
 
         if schweiz_word and schweiz_translated_german_word and schweiz_translated_word:
             with Session(engine) as session:
-                new_word = SchweizWords(user_id=current_user.id, schweiz_word=schweiz_word, schweiz_translated_german_word=schweiz_translated_german_word, schweiz_translated_word=schweiz_translated_word, )
+                last_id = session.exec(select(SchweizWords).where(SchweizWords.user_id == current_user.id).order_by(SchweizWords.user_word_id.desc())).first()
+                if last_id:
+                    last_id = last_id.id +1
+                else:
+                    last_id = 1
+                new_word = SchweizWords(user_id=current_user.id, user_word_id=last_id, schweiz_word=schweiz_word, schweiz_translated_german_word=schweiz_translated_german_word, schweiz_translated_word=schweiz_translated_word, )
                 try:
                     session.add(new_word)
                     session.commit()
                     return redirect(url_for("schweiz"))
-                except Exception as e:
+                except Exception:
                     return redirect(url_for("schweiz"))
         else:
             return render_template('schweiz.html')
@@ -309,6 +336,3 @@ def golden_gate():
 
 if __name__ == "__main__":
     app.run()
-
-
-

@@ -21,41 +21,5 @@
     </div>
 </div>
 
-
-<script>
-    function generate_word(button_id) {
-        const word_type = button_id === 'generate-german' ? 'generate-german' : 'generate-translation';
-
-        fetch("/checkup/generate_word", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 'word_type': word_type })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.querySelector('.generated-word').textContent = data.generated_word;
-            document.querySelector('.correct-translation').textContent = data.correct_translation;
-        });
-    }
-
-    document.querySelector('.generated-card').addEventListener('click', function() {
-        this.classList.toggle('clicked');
-    });
-
-    function check_translation(){
-        let word_to_check = document.querySelector('.generated-word').textContent;
-        let correct_translation = document.querySelector('.correct-translation').textContent;
-        let user_input = document.querySelector('.checkup-input').value.trim();
-
-        if (user_input === correct_translation) {
-            document.querySelector('.generated-card').classList.add('correct');
-            document.querySelector('.generated-card').classList.remove('clicked');
-            document.querySelector('.checkup-input').value = '';
-        } else {
-            document.querySelector('.generated-card').classList.remove('correct');
-        }
-    }
-</script>
+<script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 {% endblock %}

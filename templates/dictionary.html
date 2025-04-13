@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="col-12 col-md-6 container">
+<div class="col-12 col-md-6 container align-items-center justify-content-center d-flex flex-column">
 
     <input class="form-control input input-search rounded-2 mb-2" type="text" placeholder="suche nach dem Wort" id="search_input_text" oninput="filter_words()"></input>
 
@@ -17,7 +17,7 @@
             <tbody>
                 {% for word in words %}
                 <tr class="word_row">
-                    <td>{{ word.id }}</td>
+                    <td>{{ word.user_word_id }}</td>
                     <td contenteditable="true" 
                         onblur="update_value_in_dictionary(this, 'german_word_{{ word.id }}')" 
                         onclick="delete_from_dictionary()">
@@ -37,30 +37,6 @@
     </form>
 </div>
 
-<script>
-    function update_value_in_dictionary(element, inputName) {
-        let hiddenInput = document.querySelector(`input[name='${inputName}']`);
-        hiddenInput.value = element.innerText.trim();
-        document.querySelector('.form-dictionary').submit();       
-    }
+<script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 
-    function filter_words() {
-        let input = document.querySelector('#search_input_text');
-        let filter = input.value.toLowerCase();
-        
-        let rows = document.querySelectorAll('.word_row');
-        
-        rows.forEach(row => {
-            let german_word = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
-            let translated_word = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
-
-            if (german_word.includes(filter) || translated_word.includes(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
-</script>
 {% endblock %}

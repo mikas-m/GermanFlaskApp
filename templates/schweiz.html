@@ -43,7 +43,7 @@
             <tbody>
                 {% for word in words %}
                 <tr class="word_row">
-                    <td>{{ word.id }}</td>
+                    <td>{{ word.user_word_id }}</td>
                     <td contenteditable="true" 
                         onblur="update_value_in_dictionary(this, 'schweiz_word_{{ word.id }}')"
                         onclick="delete_from_dictionary()">
@@ -68,30 +68,6 @@
         </table>
     </form>
 </div>
-<script>
-    function update_value_in_dictionary(element, inputName) {
-        let hidden_input = document.querySelector(`input[name='${inputName}']`);
-        hidden_input.value = element.innerText.trim();
-        document.querySelector('.form-dictionary').submit();       
-    }
 
-    function filter_words() {
-        let input = document.querySelector('#search_input_text');
-        let filter = input.value.toLowerCase();
-        
-        let rows = document.querySelectorAll('.word_row');
-        
-        rows.forEach(row => {
-            let schweiz_word = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
-            let german_word = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
-            let translated_word = row.querySelector('td:nth-child(4)').innerText.toLowerCase();
-
-            if (schweiz_word.includes(filter) || german_word.includes(filter) || translated_word.includes(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-</script>
+<script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 {% endblock %}

@@ -62,6 +62,7 @@
   color: white;
   border: none !important;
   box-shadow: 1px 1px rgb(255, 255, 255);
+  height: 6vh;
 }
 
 .user-input:focus {
@@ -144,22 +145,23 @@
 }
 
 .icon-link {
-  font-size: 28px;
+  font-size: 20px;
   color: #ffffffad;
+  margin: 0 0.01vh;
   margin-top: 2px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
-.icon-link:nth-child(1) { transform: translateY(12px); margin-left: 4%;}
+.icon-link:nth-child(1) { transform: translateY(12px); margin-left: 4vh;}
 .icon-link:nth-child(2) { transform: translateY(6px); }
 .icon-link:nth-child(3) { transform: translateY(1px); }
 .icon-link:nth-child(4) { transform: translateY(1px); }
 .icon-link:nth-child(5) { transform: translateY(6px); }
-.icon-link:nth-child(6) { transform: translateY(12px); margin-right: 4%;}
+.icon-link:nth-child(6) { transform: translateY(12px); margin-right: 4vh;}
 
 .active-icon {
   color: #fce300 !important;
-  font-size: 36px;
+  font-size: 28px;
   margin-bottom: 2vh;
 }
 
@@ -181,9 +183,7 @@
 .form-dictionary {
   width: 95%;
   align-self: center;
-
 }
-
 
 .table-dictionary {
   border-radius: 12px;
@@ -205,6 +205,11 @@
 
 .table-dictionary thead {
   display: block;
+}
+
+.table-dictionary thead th {
+  font-size: small;
+  vertical-align: middle;
 }
 
 .table-dictionary tbody {
