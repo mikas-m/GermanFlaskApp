@@ -18,8 +18,6 @@ db = os.getenv("SQL_DB")
 
 engine = create_engine(db, echo=True)
 
-   
-
 class User(UserMixin, SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     username: str = Field(unique=True, nullable=False, max_length=50)
@@ -31,6 +29,16 @@ class GermanWords(UserMixin, SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     german_word: str = Field(nullable=False, max_length=100)
     german_translated_word: str = Field(nullable=False, max_length=100)
+
+
+class IrregularVerbs(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    infinitive: str = Field(nullable=False, max_length=50)
+    infinitive_exceptions: str = Field(max_length=50)
+    preterit: str = Field(nullable=False, max_length=50)
+    help_verb: str = Field(nullable=False, max_length=50)
+    past_participle: str = Field(nullable=False, max_length=50)
+    translation: str = Field(nullable=False, max_length=50)
     
 
 class SchweizWords(UserMixin, SQLModel, table=True):
@@ -40,15 +48,37 @@ class SchweizWords(UserMixin, SQLModel, table=True):
     schweiz_translated_german_word: str = Field(nullable=False, max_length=100)
     schweiz_translated_word: str = Field(nullable=False, max_length=100)
 
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), length(min=4, max=20)])
     password = PasswordField('Password', validators=[DataRequired(), length(min=4, max=20)])
     submit = SubmitField('Login')
 
+
 SQLModel.metadata.create_all(engine)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
+
+with Session(engine) as session:
+    count = session.query(IrregularVerbs).count()
+    if count == 0:
+        with open("german_verbs.csv", "r", encoding='utf-8') as file:
+            rows = file.readlines()
+            for row in rows:
+                infinitive, infinitive_exceptions, preterit, help_verb, past_participle, translation = row.strip().split(";")
+                new_verb = IrregularVerbs(
+                    infinitive=infinitive,
+                    infinitive_exceptions=infinitive_exceptions,
+                    preterit=preterit,
+                    help_verb=help_verb,
+                    past_participle=past_participle,
+                    translation=translation
+                )   
+                session.add(new_verb)
+                session.commit()
+
+
 
 #helper function
 def add_to_dictionary(route_name, html, table, first_form_word, second_form_word, first_form_word_id, second_form_word_id, third_form_word, third_form_word_id):

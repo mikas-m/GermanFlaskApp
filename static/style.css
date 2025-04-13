@@ -11,6 +11,29 @@
   box-shadow: 2px 2px rgb(0, 0, 0);
 }
 
+.form-check {
+  margin-left: 1vh;
+}
+
+.form-check-input {
+  width: 2vh;
+  height: 2vh;
+  background-color: #000000;
+  border: none;
+}
+
+.form-check-input:checked {
+  background-color: #000000;
+  box-shadow: none;
+  
+}
+
+.form-check-input:focus {
+  box-shadow: none; 
+}
+
+
+
 
 .input {
   align-self: center;
@@ -51,6 +74,7 @@
 .form-text {
   font-size: 0.775rem;
   color: #ffffff !important;
+  margin-left: 0.5vh;;
 }
 
 .form-control::placeholder {
@@ -187,6 +211,12 @@
   display: block;
   overflow-y: auto;
   max-height: 700px;
+}
+
+.table-dictionary-schweiz tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 350px !important;
 }
 
 .table-dictionary tr {
