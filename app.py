@@ -15,8 +15,8 @@ load_dotenv()
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 db = os.getenv("SQL_DB")
-
-engine = create_engine(db, echo=True)
+print("SQL_DB:", os.getenv("SQL_DB"))
+engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
 class User(UserMixin, SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -40,7 +40,7 @@ class IrregularVerbs(SQLModel, table=True):
     help_verb: str = Field(nullable=False, max_length=50)
     past_participle: str = Field(nullable=False, max_length=50)
     translation: str = Field(nullable=False, max_length=50)
-    
+
 
 class SchweizWords(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -62,28 +62,10 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-with Session(engine) as session:
-    count = session.query(IrregularVerbs).count()
-    if count == 0:
-        with open("german_verbs.csv", "r", encoding='utf-8') as file:
-            rows = file.readlines()
-            for row in rows:
-                infinitive, infinitive_exceptions, preterit, help_verb, past_participle, translation = row.strip().split(";")
-                new_verb = IrregularVerbs(
-                    infinitive=infinitive,
-                    infinitive_exceptions=infinitive_exceptions,
-                    preterit=preterit,
-                    help_verb=help_verb,
-                    past_participle=past_participle,
-                    translation=translation
-                )   
-                session.add(new_verb)
-                session.commit()
-
 
 
 #helper function
-def add_to_dictionary(route_name, html, table, first_form_word, second_form_word, first_form_word_id, second_form_word_id, third_form_word, third_form_word_id):
+def update_value(route_name, html, table, first_form_word, second_form_word, first_form_word_id, second_form_word_id, third_form_word, third_form_word_id):
     with Session(engine) as session:
         user_id = current_user.id
 
@@ -122,7 +104,7 @@ def add_to_dictionary(route_name, html, table, first_form_word, second_form_word
                 session.commit()
 
             return redirect(url_for(f"{route_name}"))
-        
+
         words = session.exec(select(table).where(table.user_id == user_id)).all()
         return render_template(html, words=words)
 
@@ -138,25 +120,22 @@ def login():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        
+
         with Session(engine) as session:
             user = session.exec(select(User).where(User.username == username)).first()
 
             if user:
-                if check_password_hash(user.password, password):
-                    login_user(user)
+                if password == user.password:
+                    login_user(user, remember=True)
                     return redirect(url_for("insert"))
-                else:
-                    flash("Invalid password.", "danger")
+
             else:
-                hashed_password = generate_password_hash(password)
-                new_user = User(username=username, password=hashed_password)
+                new_user = User(username=username, password=password)
                 session.add(new_user)
                 session.commit()
-
-                login_user(new_user)
-                flash("Account created and logged in successfully!", "success")
+                login_user(new_user, remember=True)
                 return redirect(url_for("insert"))
+
 
     return render_template("login.html", form=form)
 
@@ -185,8 +164,9 @@ def insert():
         if german_translated_word and german_word:
             with Session(engine) as session:
                 last_id = session.exec(select(GermanWords).where(GermanWords.user_id == current_user.id).order_by(GermanWords.user_word_id.desc())).first()
+
                 if last_id:
-                    last_id = last_id.id +1
+                    last_id = last_word.user_word_id + 1
                 else:
                     last_id = 1
 
@@ -199,7 +179,7 @@ def insert():
                     return redirect(url_for("insert"))
         else:
             return render_template('insert.html')
-        
+
     return render_template('insert.html')
 
 
@@ -208,7 +188,7 @@ def insert():
 @app.route("/dictionary", methods=["GET", "POST"])
 @login_required
 def dictionary():
-    return add_to_dictionary(
+    return update_value(
         route_name="dictionary",
         html="dictionary.html",
         table=GermanWords,
@@ -294,16 +274,19 @@ def schweiz_insert():
         schweiz_word = request.form['schweiz_word']
         schweiz_translated_german_word = request.form['schweiz_translated_german_word']
         schweiz_translated_word = request.form['schweiz_translated_word']
-        
+
 
         if schweiz_word and schweiz_translated_german_word and schweiz_translated_word:
             with Session(engine) as session:
                 last_id = session.exec(select(SchweizWords).where(SchweizWords.user_id == current_user.id).order_by(SchweizWords.user_word_id.desc())).first()
+
                 if last_id:
-                    last_id = last_id.id +1
+                    last_id = last_id.user_word_id +1
                 else:
                     last_id = 1
+
                 new_word = SchweizWords(user_id=current_user.id, user_word_id=last_id, schweiz_word=schweiz_word, schweiz_translated_german_word=schweiz_translated_german_word, schweiz_translated_word=schweiz_translated_word, )
+
                 try:
                     session.add(new_word)
                     session.commit()
@@ -312,13 +295,13 @@ def schweiz_insert():
                     return redirect(url_for("schweiz"))
         else:
             return render_template('schweiz.html')
-        
+
     return render_template('schweiz.html')
 
 @app.route("/schweiz_dictionary", methods= ["GET", "POST"])
 @login_required
 def schweiz_dictionary():
-    return add_to_dictionary(
+    return update_value(
             route_name="schweiz",
             html="schweiz.html",
             table=SchweizWords,
