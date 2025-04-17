@@ -1,2 +1,0 @@
-SQL_DB=mysql+pymysql://mirikoni:necemociovenoci@mirikoni.mysql.pythonanywhere-services.com/mirikoni$GermanFlaskApp
-SECRET_KEY=necemociovenoci
