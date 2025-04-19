@@ -1,3 +1,5 @@
+
+
 .btn {
   background-color: #000000 !important;
   color: #ffffff;
@@ -131,8 +133,9 @@
 }
 
 
+
 /* navbar */
-.curved-navbar {
+.navbar {
   position: fixed;
   bottom: 0;
   left: 50%;
@@ -165,7 +168,6 @@
   font-size: 28px;
   margin-bottom: 2vh;
 }
-
 
 /* search input */
 .input-search{
@@ -342,35 +344,42 @@ tbody td:last-child {
 }
 
 @media (min-width: 768px) {
-    .navbar {
-        top: 0 !important;
-        bottom: auto !important;
-        left: 0;
-        width: 80px;
-        height: 100vh;
-        flex-direction: none !important;
-        border-radius: 0;
-    }
 
-    .curved-navbar {
+  .navbar {
+    top: 0;
+    bottom: 92%;
+    width: 100%;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    clip-path: none !important;
+    box-shadow: 0 5px 10px rgba(248, 0, 0, 0.644); /* Changed from -5px to 5px for top bar */
+  }
+  
+  .navbar-container {
+    margin-right: 13vh;
+  }
 
-    }
+  .app-name {
+    margin-left: 2vh;
+    margin-right: 20vh
+  }
+  
 
-    .navbar-container {
-        flex-direction: column;
-        align-items: center;
-        height: 100%;
-        gap: 2rem;
-        padding-top: 2rem;
-    }
-
-    .icon-link {
-        font-size: 1.5rem;
-    }
-
-    body {
-        margin-left: 80px;
-    }
-
-
-
+  .icon-link {
+    transform: none !important;
+    font-size: 2vh;
+    color: #ffffffad;
+    padding: 0 1vh;
+  }
+  
+  .icon-log-out {
+    position: fixed;
+    margin-left: 97%;
+    
+  .active-icon {
+    color: #fce300 !important;
+    font-size: 2.5vh;
+    margin-bottom: 2vh;
+  }
+  }
+}

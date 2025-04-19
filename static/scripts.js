@@ -64,6 +64,3 @@ function filter_words() {
         }
     });
 }
-
-
-

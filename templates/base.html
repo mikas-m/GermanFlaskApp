@@ -11,9 +11,46 @@
 
 <body class="col-12 col-md-6 mx-auto d-flex flex-column" style="background-image: url('static/bg-min.png'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 100vh; opacity: 0.8; overflow: hidden">
     {% if current_user.is_authenticated %}
-    <a class="icon-log-out" href="{{ url_for('logout')}}">
-        <i class="bi bi-box-arrow-left"></i>
-    </a>
+    <nav class="navbar navbar-light bg-dark">
+        <div class="container-fluid d-flex justify-content-between align-items-center flex-nowrap">
+            <a class="app-name navbar-brand text-white m-0" href="{{ url_for('golden_gate') }}">
+                Golden Gate
+            </a>
+    
+            <div class="navbar-container d-flex gap-2 flex-nowrap overflow-auto ms-2">
+                <a class="icon-link {% if request.endpoint == 'insert' %}active-icon{% endif %}" href="{{ url_for('insert') }}">
+                    <i class="bi bi-pen"></i>
+                    <span class="d-none d-md-inline ms-1">einfügen</span>
+                </a>
+                <a class="icon-link {% if request.endpoint == 'dictionary' %}active-icon{% endif %}" href="{{ url_for('dictionary') }}">
+                    <i class="bi bi-table"></i>
+                    <span class="d-none d-md-inline ms-1">das Wörterbuch</span>
+                </a>
+                <a class="icon-link {% if request.endpoint == 'checkup' %}active-icon{% endif %}" href="{{ url_for('checkup') }}">
+                    <i class="bi bi-journal-check"></i>
+                    <span class="d-none d-md-inline ms-1">überprüfen</span>
+                </a>
+                <a class="icon-link {% if request.endpoint == 'irregular' %}active-icon{% endif %}" href="{{ url_for('irregular') }}">
+                    <i class="bi bi-emoji-expressionless-fill"></i>
+                    <span class="d-none d-md-inline ms-1">unregelmäßige Verben</span>
+                </a>
+                <a class="icon-link {% if request.endpoint == 'notes' %}active-icon{% endif %}" href="{{ url_for('notes') }}">
+                    <i class="bi bi-journals"></i>
+                    <span class="d-none d-md-inline ms-1">die Notiz</span>
+                </a>
+                <a class="icon-link {% if request.endpoint == 'schweiz' %}active-icon{% endif %}" href="{{ url_for('schweiz') }}">
+                    <i class="bi bi-shield-plus"></i>
+                    <span class="d-none d-md-inline ms-1">die Schweiz</span>
+                </a>
+            </div>
+
+            <a class="icon-log-out flex-shrink-0" href="{{ url_for('logout') }}">
+                <i class="bi bi-box-arrow-left"></i>
+            </a>
+        </div>
+    </nav>
+    
+    
     {% endif %}
     {% block content %}
     <div class="d-flex justify-content-center align-items-center vh-100 mt-n5">
@@ -22,31 +59,6 @@
         </div>
     </div>
     {% endblock %}
-
-    {% if current_user.is_authenticated %}
-    <nav class="navbar navbar-dark bg-dark fixed-bottom curved-navbar">
-        <div class="navbar-container container-fluid d-flex justify-content-center gap-5">
-            <a class="icon-link {% if request.endpoint == 'insert' %}active-icon{% endif %}" href="{{ url_for('insert') }}">
-                <i class="bi bi-pen"></i>
-            </a>
-            <a class="icon-link {% if request.endpoint == 'dictionary' %}active-icon{% endif %}" href="{{ url_for('dictionary') }}">
-                <i class="bi bi-table"></i>
-            </a>
-            <a class="icon-link {% if request.endpoint == 'checkup' %}active-icon{% endif %}" href="{{ url_for('checkup') }}">
-                <i class="bi bi-journal-check"></i>
-            </a>
-            <a class="icon-link {% if request.endpoint == 'irregular' %}active-icon{% endif %}" href="{{ url_for('irregular') }}">
-                <i class="bi bi-emoji-expressionless-fill"></i>
-            </a>
-            <a class="icon-link {% if request.endpoint == 'notes' %}active-icon{% endif %}" href="{{ url_for('notes') }}">
-                <i class="bi bi-journals"></i>
-            </a>
-            <a class="icon-link {% if request.endpoint == 'schweiz' %}active-icon{% endif %}" href="{{ url_for('schweiz') }}">
-                <i class="bi bi-shield-plus" fill="red"></i>
-            </a>
-        </div>
-    </nav>
-    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
 
