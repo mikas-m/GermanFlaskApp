@@ -1,12 +1,11 @@
 import os
 from sqlalchemy.sql import func
-from flask import Flask, render_template, url_for, redirect, flash, request, jsonify
+from flask import Flask, render_template, url_for, redirect, request, jsonify
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, length
-from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 
 
@@ -280,9 +279,9 @@ def schweiz_insert():
                 last_word = session.exec(select(SchweizWords).where(SchweizWords.user_id == current_user.id).order_by(SchweizWords.user_word_id.desc())).first()
 
                 if last_word:
-                    last_id = last_id.user_word_id +1
+                    last_id = last_word.user_word_id +1
                 else:
-                    last_word = 1
+                    last_id = 1
 
                 new_word = SchweizWords(user_id=current_user.id, user_word_id=last_id, schweiz_word=schweiz_word, schweiz_translated_german_word=schweiz_translated_german_word, schweiz_translated_word=schweiz_translated_word, )
 

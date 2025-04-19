@@ -332,7 +332,6 @@ tbody td:last-child {
   margin-top: 20%;
 }
 
-
 .correct {
   animation: glow 0.8s ease-out;
 }
@@ -342,27 +341,36 @@ tbody td:last-child {
   100% { box-shadow: 0 0 0px 0px transparent; }
 }
 
+@media (min-width: 768px) {
+    .navbar {
+        top: 0 !important;
+        bottom: auto !important;
+        left: 0;
+        width: 80px;
+        height: 100vh;
+        flex-direction: none !important;
+        border-radius: 0;
+    }
 
+    .curved-navbar {
 
-/*
-let touchstartx = 0;
-let touchendx = 0;
+    }
 
-function check_direction() {
-    if (touchendx < touchstartx)
-        document.getElementsByClassName("button-alert")[0].click();
-    if (touchendx > touchstartx)
-        document.getElementsByClassName("button-alert")[1].click();
-}
+    .navbar-container {
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        gap: 2rem;
+        padding-top: 2rem;
+    }
 
-var bb = document.getElementById("blue-bar");
+    .icon-link {
+        font-size: 1.5rem;
+    }
 
-bb.addEventListener("touchstart", (e) => {
-    touchstartx = e.changedTouches[0].screenX;
-});
-bb.addEventListener("touchend", (e) => {
-    touchendx = e.changedTouches[0].screenX;
-    check_direction();
-});
+    body {
+        margin-left: 80px;
+    }
+
 
 
