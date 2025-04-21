@@ -177,9 +177,26 @@ def insert():
                     return redirect(url_for("insert"))
         else:
             return render_template('insert.html')
+    
+    with Session(engine) as session:
+        words = session.exec(
+            select(GermanWords).where(GermanWords.user_id == current_user.id)
+        ).all()
 
-    return render_template('insert.html')
+    return render_template('insert.html', words=words)
 
+
+    return update_value(
+        route_name="dictionary",
+        html="dictionary.html",
+        table=GermanWords,
+        first_form_word="german_word",
+        second_form_word="german_translated_word",
+        first_form_word_id="german_word_",
+        second_form_word_id="german_translated_word_",
+        third_form_word=None,
+        third_form_word_id=None
+    )
 
 
 #dictionary view

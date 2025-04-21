@@ -1,5 +1,3 @@
-
-
 .btn {
   background-color: #000000 !important;
   color: #ffffff;
@@ -12,29 +10,6 @@
   color: #000000;
   box-shadow: 2px 2px rgb(0, 0, 0);
 }
-
-.form-check {
-  margin-left: 1vh;
-}
-
-.form-check-input {
-  width: 2vh;
-  height: 2vh;
-  background-color: #000000;
-  border: none;
-}
-
-.form-check-input:checked {
-  background-color: #000000;
-  box-shadow: none;
-
-}
-
-.form-check-input:focus {
-  box-shadow: none;
-}
-
-
 
 
 .input {
@@ -55,16 +30,13 @@
   box-shadow: 1px 1px #ffff00;
 }
 
-.input-form {
-  margin-top: 10vh;
-}
 
 .user-input {
   background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.4));
   color: white;
   border: none !important;
   box-shadow: 1px 1px rgb(255, 255, 255);
-  min-height: 6vh;
+  min-height: 4vh;
 }
 
 .user-input:focus {
@@ -72,7 +44,7 @@
   color: white;
   border: none !important;
   box-shadow: 1px 1px rgb(255, 255, 255);
-  min-height: 6vh;
+  min-height: 5vh;
 }
 
 .form-text {
@@ -85,6 +57,7 @@
   color: #ffffff !important;
   opacity: 0.5;
 }
+
 
 /* login */
 .btn-gradient {
@@ -133,7 +106,6 @@
 }
 
 
-
 /* navbar */
 .navbar {
   position: fixed;
@@ -145,15 +117,14 @@
   padding: 15px 0;
   border-radius: 50px;
   clip-path: ellipse(70% 100% at 50% 100%);
-  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .icon-link {
-  font-size: 20px;
+  font-size: 2.5vh;
   color: #ffffffad;
+  padding: 0 2vh;
   margin: 0 0.01vh;
-  margin-top: 2px;
-  margin-bottom: 10px;
+  margin-bottom: 5vh;
 }
 
 .icon-link:nth-child(1) { transform: translateY(12px); margin-left: 4vh;}
@@ -165,8 +136,8 @@
 
 .active-icon {
   color: #fce300 !important;
-  font-size: 28px;
-  margin-bottom: 2vh;
+  font-size: 3vh;
+  margin-bottom: 6vh;
 }
 
 /* search input */
@@ -352,34 +323,33 @@ tbody td:last-child {
     padding: 0 !important;
     border-radius: 0 !important;
     clip-path: none !important;
-    box-shadow: 0 5px 10px rgba(248, 0, 0, 0.644); /* Changed from -5px to 5px for top bar */
+    box-shadow: 0 5px 10px rgba(248, 0, 0, 0.644);
   }
   
+
   .navbar-container {
     margin-right: 13vh;
-  }
-
-  .app-name {
-    margin-left: 2vh;
-    margin-right: 20vh
+    margin-top: 2vh;
   }
   
-
   .icon-link {
     transform: none !important;
     font-size: 2vh;
     color: #ffffffad;
-    padding: 0 1vh;
+  }
+
+  .icon-link:active {
+    color: #fce300 !important;
+    font-size: 2.5vh;
   }
   
   .icon-log-out {
     position: fixed;
-    margin-left: 97%;
-    
-  .active-icon {
-    color: #fce300 !important;
-    font-size: 2.5vh;
-    margin-bottom: 2vh;
-  }
-  }
+    margin-left: 97%;   
 }
+
+
+}
+
+
+
