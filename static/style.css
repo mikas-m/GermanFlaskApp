@@ -262,8 +262,18 @@ tbody td:last-child {
 }
 
 .correct {
-  animation: correct_anim 1s ease-in-out;
+    border: 20px solid #28a745;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.6);
 }
+
+.wrong {
+    border: 20px solid #eb1321
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 40px rgba(235, 19, 33, 0.4);
+}
+
+
 
 .checkup-generated.clicked{
   .correct-translation {
