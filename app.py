@@ -31,16 +31,13 @@ class GermanWords(SQLModel, table=True):
     german_word: str = Field(nullable=False, max_length=100)
     german_translated_word: str = Field(nullable=False, max_length=100)
 
-
-class IrregularVerbs(SQLModel, table=True):
+class Notes(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    infinitive: str = Field(nullable=False, max_length=50)
-    infinitive_exceptions: str = Field(max_length=50)
-    preterit: str = Field(nullable=False, max_length=50)
-    help_verb: str = Field(nullable=False, max_length=50)
-    past_participle: str = Field(nullable=False, max_length=50)
-    translation: str = Field(nullable=False, max_length=50)
-
+    user_id: int = Field(foreign_key="user.id")
+    user_note_id: int = Field(default=None, max_length=50)
+    title: str = Field(nullable=False, max_length=100)
+    body: str = Field(nullable=False, max_length=500)
+    created_at: str = Field(nullable=False)
 
 class SchweizWords(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -177,7 +174,7 @@ def insert():
                     return redirect(url_for("insert"))
         else:
             return render_template('insert.html')
-    
+
     with Session(engine) as session:
         words = session.exec(
             select(GermanWords).where(GermanWords.user_id == current_user.id)
@@ -269,7 +266,39 @@ def irregular():
 @app.route("/notes", methods= ["GET", "POST"])
 @login_required
 def notes():
-    return render_template('notes.html')
+    if request.method == "GET":
+        with Session(engine) as session:
+            notes = session.exec(
+                select(Notes)
+                .where(Notes.user_id == current_user.id)
+                .order_by(Notes.created_at.desc())
+            ).all()
+            return render_template('notes.html', notes=notes)
+
+    if request.method == "POST":
+        data = request.get_json()
+        title = data['title'].strip()
+        body = data['body'].strip()
+
+        try:
+            with Session(engine) as session:
+                new_note = Notes(
+                    user_id = current_user.id,
+                    title=data['title'],
+                    body=data['body']
+                )
+
+                session.add(new_note)
+                session.commit()
+                return jsonify({
+                    "id": new_note.id,
+                    "title": new_note.title,
+                    "body": new_note.body,
+                    "created_at": new_note.created_at.isoformat()
+                    }), 201
+        except Exception:
+            return jsonify({"error while creating note": "Database error"}), 500
+
 
 
 

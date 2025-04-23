@@ -8,11 +8,11 @@
         <div class="col-12 col-md-6 mt-5">
             <form method="POST" action="{{ url_for('insert') }}" class="mt-5">
                 <div class="card-body">
-                    <div class="user-input-div mb-3">
+                    <div class="user-input-div mb-3" tabindex="0">
                         <small class="form-text text-muted">deutches Wort</small>
                         <input type="text" class="form-control user-input" autocapitalize="off" name="german_word" required>
                     </div>
-                    <div class="user-input-div mb-4">
+                    <div class="user-input-div mb-4" tabindex="0">
                         <small class="form-text text-muted">die übersetzung</small>
                         <input type="text" class="form-control user-input" autocapitalize="off" name="german_translated_word" required>
                     </div>
@@ -22,7 +22,7 @@
                 </div>
             </form>
         </div>
-         
+
         <!-- TABLE (right column on desktop only) -->
         <div class="col-12 col-md-6 d-none d-md-flex align-items-start justify-content-center pt-5 mt-4">
 

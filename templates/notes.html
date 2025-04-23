@@ -1,9 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-grid text-center">
-    <button type="submit" class="btn btn-outline-info">einfügen</button>
+
+<button type="button" class="btn bi-clipboard-plus btn-primary add-notes-button" data-bs-toggle="modal" data-bs-target="#exampleModal"></button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <input class="form-control input card-title rounded-2 mb-2" type="text" autocapitalize="off" placeholder="der Titel" id="note-title" required>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" btn_close_color="black"></button>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control input card-body rounded-2 mb-2" autocapitalize="off" id="note-body" required></textarea>
+        <button type="button" class="btn bi bi-save btn-primary"></button>
+      </div>
+    </div>
+  </div>
 </div>
+
 
 <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 {% endblock %}

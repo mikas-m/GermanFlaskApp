@@ -119,6 +119,10 @@
   clip-path: ellipse(70% 100% at 50% 100%);
 }
 
+.navbar-hidden {
+  display: none !important;
+}
+
 .icon-link {
   font-size: 2.5vh;
   color: #ffffffad;
@@ -258,7 +262,7 @@ tbody td:last-child {
   margin-top: 10%;
   box-shadow: 1px 1px rgb(0, 0, 0);
   border: none !important;
-  height: 15vh;
+  min-height: 15vh !important;
 }
 
 .correct {
@@ -323,6 +327,20 @@ tbody td:last-child {
   0% { box-shadow: 0 0 10px 4px #00ff88; }
   100% { box-shadow: 0 0 0px 0px transparent; }
 }
+
+
+.add-notes-button {
+    margin-left: 2vh;
+    margin-top: 2vh;
+    width: 15%;
+}
+
+.notes-card {
+    width: 90%;
+    display: none;
+    margin-left: 5%;
+}
+
 
 @media (min-width: 768px) {
 
