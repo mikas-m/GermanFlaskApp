@@ -272,7 +272,7 @@ tbody td:last-child {
 }
 
 .wrong {
-    border: 20px solid #eb1321
+    border: 20px solid #eb1321;
     border-radius: 0.75rem;
     box-shadow: 0 10px 40px rgba(235, 19, 33, 0.4);
 }
