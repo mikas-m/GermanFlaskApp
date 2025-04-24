@@ -335,12 +335,16 @@ tbody td:last-child {
     width: 15%;
 }
 
-.notes-card {
-    width: 90%;
-    display: none;
-    margin-left: 5%;
+#new-card-note .modal-content {
+    min-height: 40vh !important;
+    background-color: rgba(0, 0, 0)!important;
+    border-color: white !important;
 }
 
+.card-body {
+    min-height: 20vh !important;
+    color: white !important;
+}
 
 @media (min-width: 768px) {
 

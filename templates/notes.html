@@ -2,14 +2,13 @@
 
 {% block content %}
 
-<button type="button" class="btn bi-clipboard-plus btn-primary add-notes-button" data-bs-toggle="modal" data-bs-target="#exampleModal"></button>
+<button type="button" class="btn bi-clipboard-plus btn-primary add-notes-button" data-bs-toggle="modal" data-bs-target="#new-card-note"></button>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="new-card-note" tabindex="-1" aria-labelledby="new-card-note" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <input class="form-control input card-title rounded-2 mb-2" type="text" autocapitalize="off" placeholder="der Titel" id="note-title" required>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" btn_close_color="black"></button>
       </div>
       <div class="modal-body">
         <textarea class="form-control input card-body rounded-2 mb-2" autocapitalize="off" id="note-body" required></textarea>
@@ -17,6 +16,24 @@
       </div>
     </div>
   </div>
+</div>
+
+
+<div class="accordion" id="accordion-notes">
+  {% for note in notes %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading-{{ note.id }}">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ note.id }}" aria-expanded="false" aria-controls="collapse-{{ note.id }}">
+        {{ note.title }}
+      </button>
+    </h2>
+    <div id="collapse-{{ note.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ note.id }}" data-bs-parent="#accordion-notes">
+      <div class="accordion-body">
+        {{ note.body | nl2br }}  <!-- nl2br filter converts newlines to <br> -->
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 
 

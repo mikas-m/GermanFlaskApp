@@ -95,7 +95,7 @@ function filter_words() {
 // Dictionary Erase
 function erase() {
   let holdTimer;
-  
+
   document.querySelectorAll('.tbody td').forEach(line => {
     line.addEventListener('mousedown', () => {
       holdTimer = setTimeout(() => {
@@ -109,26 +109,63 @@ function erase() {
 }
 
 // Notes Handling
-function openCardNotes() {
-  document.getElementById('new_card').style.display = 'block';
+function sanitizeId(text) {
+  return text.toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '')
+    .substring(0, 50);
 }
 
-function closeCardNotes() {
-  document.getElementById('new_card').style.display = 'none';
-}
+document.getElementById('saveNoteBtn').addEventListener('click', async () => {
+  const titleInput = document.getElementById('note-title');
+  const bodyInput = document.getElementById('note-body');
+
+  const title = titleInput.value.trim();
+  const body = bodyInput.value.trim();
 
 
-function saveCardNotes() {
-    const noteTitle = document.querySelector('note-title').value
-    const noteBody = document.querySelector('note-body').value
-    
-    fetch('/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, body })
-    })
-    .then(response => reponse.json())
-    .then(data => {
-        
-    })
-}
+  try {
+    const response = await fetch('/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, body })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save note');
+    }
+
+    const newNote = await response.json();
+
+    const accordion = document.getElementById('accordion-notes');
+
+    const accordionItem = document.createElement('div');
+    accordionItem.classList.add('accordion-item');
+    accordionItem.innerHTML = `
+      <h2 class="accordion-header" id="heading-${newNote.id}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${newNote.id}" aria-expanded="false" aria-controls="collapse-${newNote.id}">
+          ${newNote.title}
+        </button>
+      </h2>
+      <div id="collapse-${newNote.id}" class="accordion-collapse collapse" aria-labelledby="heading-${newNote.id}" data-bs-parent="#accordion-notes">
+        <div class="accordion-body">
+          ${newNote.body.replace(/\n/g, '<br>')}
+        </div>
+      </div>
+    `;
+
+    accordion.appendChild(accordionItem);
+
+    titleInput.value = '';
+    bodyInput.value = '';
+
+    const modalEl = document.getElementById('new-card-note');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
+
+  } catch (error) {
+    alert('Error saving note: ' + error.message);
+  }
+});
+

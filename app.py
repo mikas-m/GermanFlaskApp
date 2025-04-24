@@ -1,12 +1,16 @@
+import re
 import os
+from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
 from flask import Flask, render_template, url_for, redirect, request, jsonify
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from markupsafe import Markup, escape
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, length
 from dotenv import load_dotenv
+from datetime import datetime
 
 
 load_dotenv()
@@ -37,7 +41,7 @@ class Notes(SQLModel, table=True):
     user_note_id: int = Field(default=None, max_length=50)
     title: str = Field(nullable=False, max_length=100)
     body: str = Field(nullable=False, max_length=500)
-    created_at: str = Field(nullable=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column(DateTime(timezone=True)))
 
 class SchweizWords(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -59,6 +63,14 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
+
+
+
+@app.template_filter('nl2br')
+def nl2br(value):
+    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n')
+                          for p in _paragraph_re.split(escape(value)))
+    return Markup(result)
 
 
 #helper function
@@ -262,8 +274,7 @@ def irregular():
 
 
 
-#notes view
-@app.route("/notes", methods= ["GET", "POST"])
+@app.route("/notes", methods=["GET", "POST"])
 @login_required
 def notes():
     if request.method == "GET":
@@ -277,27 +288,44 @@ def notes():
 
     if request.method == "POST":
         data = request.get_json()
-        title = data['title'].strip()
-        body = data['body'].strip()
+        title = data.get('title', '').strip()
+        body = data.get('body', '').strip()
+
+        if not title or not body:
+            return jsonify({"error": "Title and body required"}, 400)
 
         try:
             with Session(engine) as session:
                 new_note = Notes(
-                    user_id = current_user.id,
-                    title=data['title'],
-                    body=data['body']
+                    user_id=current_user.id,
+                    title=title,
+                    body=body
                 )
-
                 session.add(new_note)
                 session.commit()
-                return jsonify({
-                    "id": new_note.id,
-                    "title": new_note.title,
-                    "body": new_note.body,
-                    "created_at": new_note.created_at.isoformat()
-                    }), 201
-        except Exception:
-            return jsonify({"error while creating note": "Database error"}), 500
+                session.refresh(new_note)
+
+                all_notes = session.exec(
+                    select(Notes)
+                    .where(Notes.user_id == current_user.id)
+                    .order_by(Notes.created_at.desc())
+                ).all()
+
+                notes_list = []
+                for note in all_notes:
+                    notes_list.append({
+                        "id": note.id,
+                        "title": note.title,
+                        "body": note.body,
+                        "created_at": note.created_at.isoformat() if note.created_at else None  # Handle potential None
+                    })
+
+                return jsonify(notes=notes_list), 201
+
+        except Exception as e:
+            return jsonify({"error": "Database error", "details": str(e)}, 500)
+
+
 
 
 
