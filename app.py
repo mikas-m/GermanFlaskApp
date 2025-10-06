@@ -69,7 +69,7 @@ login_manager.init_app(app)
 @app.template_filter('nl2br')
 def nl2br(value):
     result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n')
-                          for p in _paragraph_re.split(escape(value)))
+        for p in _paragraph_re.split(escape(value)))
     return Markup(result)
 
 
@@ -118,6 +118,31 @@ def update_value(route_name, html, table, first_form_word, second_form_word, fir
         return render_template(html, words=words)
 
 
+def resequence_user_words(session, table, user_id, word_id_field):
+    words = session.exec(
+        select(table)
+        .where(table.user_id == user_id)
+        .order_by(table.id)
+    ).all()
+
+    for index, word in enumerate(words, start=1):
+        setattr(word, word_id_field, index)
+
+
+
+@app.route("/delete_word", methods=["POST"])
+@login_required
+def delete_word():
+    word_id = request.form.get("word_id")
+    if word_id:
+        with Session(engine) as session:
+            word = session.get(GermanWords, int(word_id))
+            if word and word.user_id == current_user.id:
+                session.delete(word)
+                resequence_user_words(session, GermanWords, current_user.id, "user_word_id")
+                session.commit()
+    return redirect(url_for("insert"))
+
 
 
 #general
@@ -150,7 +175,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return render_template("base.html")
+    return redirect(url_for("login"))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -158,63 +183,65 @@ def load_user(user_id):
         return session.get(User, int(user_id))
 
 
-
-
 #insert view
-@app.route("/insert", methods= ["GET", "POST"])
+@app.route("/insert", methods=["GET", "POST"])
 @login_required
 def insert():
     if request.method == "POST":
-        german_translated_word = request.form['german_translated_word']
-        german_word = request.form['german_word']
+        if 'german_word' in request.form and 'german_translated_word' in request.form:
+            german_word = request.form['german_word']
+            german_translated_word = request.form['german_translated_word']
 
-        if german_translated_word and german_word:
-            with Session(engine) as session:
-                last_word = session.exec(select(GermanWords).where(GermanWords.user_id == current_user.id).order_by(GermanWords.user_word_id.desc())).first()
+            if german_word and german_translated_word:
+                with Session(engine) as session:
+                    last_word = session.exec(
+                        select(GermanWords)
+                        .where(GermanWords.user_id == current_user.id)
+                        .order_by(GermanWords.user_word_id.desc())
+                    ).first()
 
-                if last_word:
-                    last_id = last_word.user_word_id + 1
-                else:
-                    last_id = 1
+                    last_id = last_word.user_word_id + 1 if last_word else 1
 
-                new_word = GermanWords(user_word_id=last_id, user_id=current_user.id, german_translated_word=german_translated_word, german_word=german_word)
-                try:
-                    session.add(new_word)
-                    session.commit()
-                    return redirect(url_for("insert"))
-                except Exception:
-                    return redirect(url_for("insert"))
+                    new_word = GermanWords(
+                        user_word_id=last_id,
+                        user_id=current_user.id,
+                        german_word=german_word,
+                        german_translated_word=german_translated_word
+                    )
+
+                    try:
+                        session.add(new_word)
+                        session.commit()
+                    except Exception:
+                        pass
+            return redirect(url_for("insert"))
+
         else:
-            return render_template('insert.html')
+            return update_value(
+                route_name="insert",
+                html="insert.html",
+                table=GermanWords,
+                first_form_word="german_word",
+                second_form_word="german_translated_word",
+                first_form_word_id="german_word_",
+                second_form_word_id="german_translated_word_",
+                third_form_word=None,
+                third_form_word_id=None
+            )
 
     with Session(engine) as session:
         words = session.exec(
             select(GermanWords).where(GermanWords.user_id == current_user.id)
         ).all()
 
-    return render_template('insert.html', words=words)
+    return render_template("insert.html", words=words)
 
-
-    return update_value(
-        route_name="dictionary",
-        html="dictionary.html",
-        table=GermanWords,
-        first_form_word="german_word",
-        second_form_word="german_translated_word",
-        first_form_word_id="german_word_",
-        second_form_word_id="german_translated_word_",
-        third_form_word=None,
-        third_form_word_id=None
-    )
-
-
-#dictionary view
 @app.route("/dictionary", methods=["GET", "POST"])
 @login_required
 def dictionary():
     return update_value(
-        route_name="dictionary",
-        html="dictionary.html",
+        route_name="insert",             
+        html="insert.html",                  
         table=GermanWords,
         first_form_word="german_word",
         second_form_word="german_translated_word",
@@ -223,47 +250,6 @@ def dictionary():
         third_form_word=None,
         third_form_word_id=None
     )
-
-
-
-
-#checkup view
-@app.route("/checkup", methods= ["GET", "POST"])
-@login_required
-def checkup():
-    return render_template('checkup.html')
-
-@app.route("/checkup/generate_word", methods=["POST"])
-@login_required
-def generate_word():
-    user_id = current_user.id
-    word_type = request.json.get('word_type')
-
-    with Session(engine) as session:
-        word = session.exec(
-            select(GermanWords)
-            .where(GermanWords.user_id == user_id)
-            .order_by(func.random())
-            .limit(1)
-        ).first()
-
-        if word:
-            if word_type == "generate-german":
-                return jsonify(
-                    generated_word=word.german_word,
-                    correct_translation=word.german_translated_word
-                )
-            elif word_type == "generate-translation":
-                return jsonify(
-                    generated_word=word.german_translated_word,
-                    correct_translation=word.german_word
-                )
-
-    return jsonify(
-        generated_word="-.-",
-        correct_translation=""
-    )
-
 
 
 #irregular verbs view

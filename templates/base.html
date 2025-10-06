@@ -19,14 +19,6 @@
                     <i class="bi bi-pen"></i>
                     <span class="d-none d-md-inline ms-1">einfügen</span>
                 </a>
-                <a class="icon-link {% if request.endpoint == 'dictionary' %}active-icon{% endif %}" href="{{ url_for('dictionary') }}">
-                    <i class="bi bi-table"></i>
-                    <span class="d-none d-md-inline ms-1">das Wörterbuch</span>
-                </a>
-                <a class="icon-link {% if request.endpoint == 'checkup' %}active-icon{% endif %}" href="{{ url_for('checkup') }}">
-                    <i class="bi bi-journal-check"></i>
-                    <span class="d-none d-md-inline ms-1">überprüfen</span>
-                </a>
                 <a class="icon-link {% if request.endpoint == 'irregular' %}active-icon{% endif %}" href="{{ url_for('irregular') }}">
                     <i class="bi bi-emoji-expressionless-fill"></i>
                     <span class="d-none d-md-inline ms-1">unregelmäßige Verben</span>
@@ -59,10 +51,6 @@
                 <a class="icon-link {% if request.endpoint == 'insert' %}active-icon{% endif %}" href="{{ url_for('insert') }}">
                     <i class="bi bi-pen"></i>
                     <span class="d-none d-md-inline ms-1">deines Wörterbuch</span>
-                </a>
-                <a class="icon-link {% if request.endpoint == 'checkup' %}active-icon{% endif %}" href="{{ url_for('checkup') }}">
-                    <i class="bi bi-journal-check"></i>
-                    <span class="d-none d-md-inline ms-1">überprüfen</span>
                 </a>
                 <a class="icon-link {% if request.endpoint == 'irregular' %}active-icon{% endif %}" href="{{ url_for('irregular') }}">
                     <i class="bi bi-emoji-expressionless-fill"></i>
