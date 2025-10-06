@@ -44,36 +44,6 @@ function setupNavbarHiding() {
   });
 }
 
-// Word Generation
-function generate_word(button_id) {
-  const word_type = button_id === 'generate-german' ? 'generate-german' : 'generate-translation';
-
-  fetch("/checkup/generate_word", {
-    method: "POST",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 'word_type': word_type })
-  })
-  .then(response => response.json())
-  .then(data => {
-    document.querySelector('.generated-word').textContent = data.generated_word;
-    document.querySelector('.correct-translation').textContent = data.correct_translation;
-  });
-}
-
-// Translation Check
-function check_translation() {
-  const card = document.querySelector('.generated-card');
-  const correct_translation = document.querySelector('.correct-translation').textContent.trim();
-  const user_input = document.querySelector('.user-input').value.trim();
-
-  card.classList.remove('correct', 'wrong');
-
-  if (user_input.length > 0) card.classList.add('wrong');
-  if (user_input === correct_translation) {
-    card.classList.remove('wrong');
-    card.classList.add('correct');
-  }
-}
 
 // Dictionary Update
 function update_value_in_dictionary(element, inputName) {
@@ -81,6 +51,14 @@ function update_value_in_dictionary(element, inputName) {
   hiddenInput.value = element.innerText.trim();
   document.querySelector('.form-dictionary').submit();
 }
+
+function focus_row(rowElement) {
+  document.querySelectorAll('.word_row').forEach(row => {
+    row.classList.remove('active-row');
+  }); 
+  rowElement.classList.add('active-row');
+}
+
 
 // Word Filtering
 function filter_words() {
@@ -92,21 +70,6 @@ function filter_words() {
   });
 }
 
-// Dictionary Erase
-function erase() {
-  let holdTimer;
-
-  document.querySelectorAll('.tbody td').forEach(line => {
-    line.addEventListener('mousedown', () => {
-      holdTimer = setTimeout(() => {
-        if (confirm("Erase this line?")) line.remove();
-      }, 1000);
-    });
-
-    line.addEventListener('mouseup', () => clearTimeout(holdTimer));
-    line.addEventListener('mouseleave', () => clearTimeout(holdTimer));
-  });
-}
 
 // Notes Handling
 function sanitizeId(text) {
