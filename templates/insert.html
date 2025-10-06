@@ -50,14 +50,16 @@
                                         </form>
                                     </td>
                                     <td contenteditable="true"
+                                        onfocus="focus_row(this.parentElement)"
                                         onblur="update_value_in_dictionary(this, 'german_word_{{ word.id }}')"
-                                        onclick="delete_from_dictionary()">
+                                        onclick="focus_row(this.parentElement)">
                                         <div>{{ word.german_word }}</div>
                                         <input type="hidden" name="german_word_{{ word.id }}" value="{{ word.german_word }}">
                                     </td>
                                     <td contenteditable="true"
+                                        onfocus="focus_row(this.parentElement)"
                                         onblur="update_value_in_dictionary(this, 'german_translated_word_{{ word.id }}')"
-                                        onclick="delete_from_dictionary()">
+                                        onclick="focus_row(this.parentElement)">
                                         <div>{{ word.german_translated_word }}</div>
                                         <input type="hidden" name="german_translated_word_{{ word.id }}" value="{{ word.german_translated_word }}">
                                     </td>

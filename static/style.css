@@ -271,6 +271,12 @@ tbody td:last-child {
 }
 
 
+.word_row.active-row {
+  background-color: rgba(255, 255, 255, 0.1);
+  outline: 2px solid #00bcd4;
+  transition: background-color 0.3s, outline 0.3s;
+}
+
 
 .add-notes-button {
     margin-left: 2vh;
