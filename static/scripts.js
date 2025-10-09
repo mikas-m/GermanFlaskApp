@@ -61,12 +61,25 @@ function focus_row(rowElement) {
 
 
 // Word Filtering
-function filter_words() {
+function filter_words_dictionary() {
   const filter = document.querySelector('#search_input_text').value.toLowerCase();
   document.querySelectorAll('.word_row').forEach(row => {
     const german = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
     const translated = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
     row.style.display = (german.includes(filter) || translated.includes(filter)) ? '' : 'none';
+  });
+}
+
+
+function filter_words_irregular() {
+  const filter = document.querySelector('#search_input_text').value.toLowerCase();
+  document.querySelectorAll('.word_row').forEach(row => {
+    const infinitive = row.querySelector('td:nth-child(1)').innerText.toLowerCase();
+    const second_third_infinitive = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
+    const preterit = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
+    const perfekt = row.querySelector('td:nth-child(4)').innerText.toLowerCase();
+    const translation = row.querySelector('td:nth-child(5)').innerText.toLowerCase();
+    row.style.display = (infinitive.includes(filter) || second_third_infinitive.includes(filter) || preterit.includes(filter) || perfekt.includes(filter) || translation.includes(filter)) ? '' : 'none';
   });
 }
 

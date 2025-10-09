@@ -1,54 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="heading">dein Wörterbuch</h1>
-<div class="col-12 col-md-6 container">
-    <div class="container d-flex align-items-center w-100 mt-5">
-        <input class="form-control input rounded-2" type="text" placeholder="eintippen oder klicken" id="search_input_text"></input>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-        </div>
-    </div>
-    
+<h1 class="heading">unregelmäßige Verben</h1>
 
-    <form method="POST" action="{{ url_for('insert') }}" class="input-form w-95">
-        <div class="card-body">
-            <div class="user-check-div d-flex align-items-center w-100 mb-3 mb-3">
-                <input type="text" class="form-control user-input" id="german_word" name="german_word" required>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                </div>
+<div class="col-12 col-md-6 px-3">
+    <input class="form-control input input-search rounded-2 mb-2 w-100" type="text" autocapitalize="off" placeholder="suche nach dem Wort" id="search_input_text" oninput="filter_words_irregular()">
+
+        <form class="form-dictionary w-100" method="POST" action="{{ url_for('irregular') }}">
+            <div class="table-wrapper">
+                <table class="table table-dark table-standard table-irregular">
+                    <thead>
+                        <tr>
+                            <th class="th_irregular">Infinitiv</th>
+                            <th class="th_irregular">2./3. Person</th>
+                            <th class="th_irregular">Präteritum</th>
+                            <th class="th_irregular">Perfekt</th>
+                            <th class="th_irregular">Übersetzung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for verb in verbs %}
+                        <tr class="word_row">
+                            <td onclick="toggleVisibility(this)">
+                                <div>{{ verb.infinitive }}</div>
+                                <input type="hidden" name="infinitive_{{ verb.id }}" value="{{ verb.infinitive }}">
+                            </td>
+                            <td onclick="toggleVisibility(this)">
+                                <div>{{ verb.second_third_infinitive }}</div>
+                                <input type="hidden" name="second_third_infinitive_{{ verb.id }}" value="{{ verb.second_third_infinitive }}">
+                            </td>
+                            <td onclick="toggleVisibility(this)">
+                                <div>{{ verb.preterit }}</div>
+                                <input type="hidden" name="preterit_{{ verb.id }}" value="{{ verb.preterit }}">
+                            </td>
+                            <td onclick="toggleVisibility(this)">
+                                <div>{{ verb.perfekt }}</div>
+                                <input type="hidden" name="perfekt_{{ verb.id }}" value="{{ verb.perfekt }}">
+                            </td>
+                            <td onclick="toggleVisibility(this)">
+                                <div>{{ verb.translation }}</div>
+                                <input type="hidden" name="translation_{{ verb.id }}" value="{{ verb.translation }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="user-check-div d-flex align-items-center w-100 mb-3">
-                <input type="text" class="form-control user-input" id="german_word" name="german_word" required>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                </div>
-            </div>
-            <div class="user-check-div d-flex align-items-center w-100 mb-3">
-                <input type="text" class="form-control user-input" id="german_word" name="german_word" required>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                </div>
-            </div>
-            <div class="user-check-div d-flex align-items-center w-100 mb-3">
-                <input type="text" class="form-control user-input" id="german_word" name="german_word" required>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                </div>
-            </div>
-            <div class="user-check-div d-flex align-items-center w-100 mb-3">
-                <input type="text" class="form-control user-input" id="german_word" name="german_word" required>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                </div>
-            </div>
-            <div class="d-grid text-center w-100">
-                <button type="submit" class="btn btn-outline-info" id="insert_words">einfügen</button>
-            </div>
-        </div>
-    </form>
+        </form>
 </div>
-
+    
 <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
+
 {% endblock %}

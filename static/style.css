@@ -147,7 +147,44 @@
 .active-icon {
   color: #fce300 !important;
   font-size: 3vh;
-  margin-bottom: 4vh;
+  margin-bottom: 2vh;
+}
+
+.app-name {
+  text-align: center;
+  width: 100%;
+  font-size: small;
+  color: #FFD700;
+  letter-spacing: 20%;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-shadow: 2px 2px 5px #000;
+}
+
+.btn-gradient-app-name {
+  position: relative;
+  padding: 10px 20px;
+  font-weight: bold;
+
+  background: linear-gradient(130deg, rgb(4, 134, 87), rgb(255, 138, 4), rgb(124, 1, 42));
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  border-radius: 8px;
+  border: none;
+  z-index: 1;
+  overflow: hidden;
+
+  animation: moveGradient 5s linear infinite;
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 400% 50%;
+  }
 }
 
 
@@ -171,7 +208,7 @@
   align-self: center;
 }
 
-.table-dictionary {
+.table-standard {
   border-radius: 12px;
   overflow: hidden;
   table-layout: fixed;
@@ -179,38 +216,32 @@
   box-shadow: 2px 2px rgb(47, 152, 201);
 }
 
-.table-dictionary th, td:focus {
+.table-standard th, td:focus {
   outline: none;
   border-radius: 2% !important;
   border-color: #ffff00;
 }
 
-.table-dictionary td div{
+.table-standard td div{
   overflow-x: auto;
 }
 
-.table-dictionary thead {
+.table-standard thead {
   display: block;
 }
 
-.table-dictionary thead th {
+.table-standard thead th {
   font-size: small;
   vertical-align: middle;
 }
 
-.table-dictionary tbody {
+.table-standard tbody {
   display: block;
   overflow-y: auto;
   max-height: 240px;
 }
 
-.table-dictionary-schweiz tbody {
-  display: block;
-  overflow-y: auto;
-  max-height: 350px !important;
-}
-
-.table-dictionary tr {
+.table-standard tr {
   display: table;
   width: 100%;
   table-layout: fixed;
@@ -241,7 +272,7 @@ tbody td {
   font-size: 80%;
 }
 
-.table-dictionary td {
+.table-standard td {
     white-space: nowrap;
     overflow-x: auto;
 }
@@ -254,6 +285,47 @@ tbody td:last-child {
   border-right: None !important;
 }
 
+
+
+
+/* table irregular verbs */
+.th_irregular {
+  width: 20% !important;
+  text-align: center !important;
+  font-size: x-small !important
+}
+
+.table-irregular tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 68vh;
+}
+
+.table-irregular th:first-child, td:first-child {
+  width: 20% !important;
+}
+
+tbody td:first-child {
+  text-align:left !important;
+}
+
+
+
+/* table schweiz */
+.table-standard-schweiz tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 30vh !important;
+}
+
+
+
+.logout-fixed-icon {
+  position: fixed;
+  margin-left: 93.5%;
+  font-size: 20px;
+  color:#e3e5e7;
+}
 .btn-id {
   background-color: transparent;
   color: white;

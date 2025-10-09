@@ -51,6 +51,15 @@ class SchweizWords(SQLModel, table=True):
     schweiz_translated_german_word: str = Field(nullable=False, max_length=100)
     schweiz_translated_word: str = Field(nullable=False, max_length=100)
 
+class irregularVerbs(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    infinitive: str = Field(nullable=False, max_length=100)
+    second_third_infinitive: str = Field(nullable=False, max_length=100)
+    preterit: str = Field(nullable=False, max_length=100)
+    perfekt: str = Field(nullable=False, max_length=100)
+    translation: str = Field(nullable=False, max_length=100)
+
+
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), length(min=4, max=20)])
@@ -142,7 +151,6 @@ def delete_word():
                 resequence_user_words(session, GermanWords, current_user.id, "user_word_id")
                 session.commit()
     return redirect(url_for("insert"))
-
 
 
 #general
@@ -253,10 +261,17 @@ def dictionary():
 
 
 #irregular verbs view
-@app.route("/irregular", methods= ["GET", "POST"])
+@app.route("/irregular", methods=["GET", "POST"])
 @login_required
 def irregular():
-    return render_template('irregular.html')
+    with Session(engine) as session:
+        verbs = session.exec(select(irregularVerbs)).all()
+    return render_template('irregular.html', verbs=verbs)
+
+
+
+
+
 
 
 
