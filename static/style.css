@@ -201,7 +201,7 @@
 .table-dictionary tbody {
   display: block;
   overflow-y: auto;
-  max-height: 400px;
+  max-height: 240px;
 }
 
 .table-dictionary-schweiz tbody {
