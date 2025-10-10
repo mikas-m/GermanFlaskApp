@@ -19,7 +19,7 @@ function initializeEventListeners() {
   // Dictionary Filter
   const searchInput = document.querySelector('#search_input_text');
   if (searchInput) {
-    searchInput.addEventListener('input', filter_words);
+    searchInput.addEventListener('input', filterWordsDictionary);
   }
 
   // Dictionary Long Press
@@ -46,22 +46,60 @@ function setupNavbarHiding() {
 
 
 // Dictionary Update
-function update_value_in_dictionary(element, inputName) {
+function updateValueInDictionary(element, inputName) {
   let hiddenInput = document.querySelector(`input[name='${inputName}']`);
   hiddenInput.value = element.innerText.trim();
   document.querySelector('.form-dictionary').submit();
 }
 
-function focus_row(rowElement) {
+function focusRow(rowElement) {
   document.querySelectorAll('.word_row').forEach(row => {
     row.classList.remove('active-row');
   }); 
   rowElement.classList.add('active-row');
 }
 
+function setupLongPressEditing() {
+  const tds = document.querySelectorAll('td');
+
+  tds.forEach(td => {
+    let pressTimer = null;
+    let longPressed = false;
+
+    td.addEventListener('mousedown', () => {
+      longPressed = false;
+
+      pressTimer = setTimeout(() => {
+        longPressed = true;
+        td.setAttribute('contenteditable', 'true');
+        td.focus();
+      }, 1000);
+    });
+
+    td.addEventListener('mouseup', () => {
+      clearTimeout(pressTimer);
+
+      if (!longPressed) {
+        td.blur();
+      }
+    });
+
+    td.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+    td.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+    td.addEventListener('blur', () => {
+      td.setAttribute('contenteditable', 'false');
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', setupLongPressEditing);
+
+
+
 
 // Word Filtering
-function filter_words_dictionary() {
+function filterWordsDictionary() {
   const filter = document.querySelector('#search_input_text').value.toLowerCase();
   document.querySelectorAll('.word_row').forEach(row => {
     const german = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
@@ -71,7 +109,7 @@ function filter_words_dictionary() {
 }
 
 
-function filter_words_irregular() {
+function filterWordsIrregular() {
   const filter = document.querySelector('#search_input_text').value.toLowerCase();
   document.querySelectorAll('.word_row').forEach(row => {
     const infinitive = row.querySelector('td:nth-child(1)').innerText.toLowerCase();
@@ -79,9 +117,27 @@ function filter_words_irregular() {
     const preterit = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
     const perfekt = row.querySelector('td:nth-child(4)').innerText.toLowerCase();
     const translation = row.querySelector('td:nth-child(5)').innerText.toLowerCase();
-    row.style.display = (infinitive.includes(filter) || second_third_infinitive.includes(filter) || preterit.includes(filter) || perfekt.includes(filter) || translation.includes(filter)) ? '' : 'none';
+    row.style.display = (
+      infinitive.includes(filter) 
+      || second_third_infinitive.includes(filter) 
+      || preterit.includes(filter) 
+      || perfekt.includes(filter) 
+      || translation.includes(filter)
+    ) ? '' : 'none';
   });
 }
+
+
+function toggleVisibility(td) {
+  const div = td.querySelector('div');
+  if (div.style.display === 'none') {
+    div.style.display = 'block';
+  } else {
+    div.style.display = 'none';
+  }
+}
+
+
 
 
 // Notes Handling
@@ -93,7 +149,9 @@ function sanitizeId(text) {
     .substring(0, 50);
 }
 
-document.getElementById('saveNoteBtn').addEventListener('click', async () => {
+  const saveNoteBtn = document.getElementById('saveNoteBtn');
+  if (saveNoteBtn) {
+  saveNoteBtn.addEventListener('click', async () => {
   const titleInput = document.getElementById('note-title');
   const bodyInput = document.getElementById('note-body');
 
@@ -144,4 +202,4 @@ document.getElementById('saveNoteBtn').addEventListener('click', async () => {
     alert('Error saving note: ' + error.message);
   }
 });
-
+}

@@ -49,19 +49,19 @@
                         <tr class="word_row">
                             <td>{{ word.user_word_id }}</td>
                             <td contenteditable="true"
-                                onblur="update_value_in_dictionary(this, 'schweiz_word_{{ word.id }}')"
+                                onblur="updateValueInDictionary(this, 'schweiz_word_{{ word.id }}')"
                                 onclick="delete_from_dictionary()">
                                 <div>{{ word.schweiz_word }}</div>
                                 <input type="hidden" name="schweiz_word_{{ word.id }}" value="{{ word.schweiz_word }}">
                             </td>
                             <td contenteditable="true"
-                                onblur="update_value_in_dictionary(this, 'schweiz_translated_german_word_{{ word.id }}')"
+                                onblur="updateValueInDictionary(this, 'schweiz_translated_german_word_{{ word.id }}')"
                                 onclick="delete_from_dictionary()">
                                 <div>{{ word.schweiz_translated_german_word }}</div>
                                 <input type="hidden" name="schweiz_translated_german_word_{{ word.id }}" value="{{ word.schweiz_translated_german_word }}">
                             </td>
                             <td contenteditable="true"
-                                onblur="update_value_in_dictionary(this, 'schweiz_translated_word_{{ word.id }}')"
+                                onblur="updateValueInDictionary(this, 'schweiz_translated_word_{{ word.id }}')"
                                 onclick="delete_from_dictionary()">
                                 <div>{{ word.schweiz_translated_word }}</div>
                                 <input type="hidden" name="schweiz_translated_word_{{ word.id }}" value="{{ word.schweiz_translated_word }}">

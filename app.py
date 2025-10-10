@@ -138,19 +138,30 @@ def resequence_user_words(session, table, user_id, word_id_field):
         setattr(word, word_id_field, index)
 
 
-
 @app.route("/delete_word", methods=["POST"])
 @login_required
 def delete_word():
     word_id = request.form.get("word_id")
-    if word_id:
-        with Session(engine) as session:
+    print("Deleting word with id:", word_id)
+    with Session(engine) as session:
+        if word_id:
             word = session.get(GermanWords, int(word_id))
+            print("Word found:", word)
             if word and word.user_id == current_user.id:
                 session.delete(word)
+                session.commit()  # prvo commit da obrišeš
+                print("Word deleted, resequencing...")
                 resequence_user_words(session, GermanWords, current_user.id, "user_word_id")
-                session.commit()
+                session.commit()  # drugi commit za resequencing
+                print("Resequencing done.")
+            else:
+                print("Word not found or does not belong to user.")
+        else:
+            print("No word_id received.")
     return redirect(url_for("insert"))
+
+
+
 
 
 #general
