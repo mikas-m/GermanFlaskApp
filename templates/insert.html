@@ -26,7 +26,7 @@
 
         <!-- TABLE (right column on desktop only) -->
         <div class="col-12 col-md-6 px-3">
-            <input class="form-control input input-search rounded-2 mb-2 w-100" type="text" autocapitalize="off" placeholder="suche nach dem Wort" id="search_input_text" oninput="filterWordsDictionary()">
+            <input class="form-control input input-search-dictionary rounded-2 mb-2 w-100" type="text" autocapitalize="off" placeholder="suche nach dem Wort" id="search_input_text_insert" oninput="filterWordsDictionary()">
 
                 <form class="form-dictionary w-100" method="POST" action="{{ url_for('dictionary') }}">
                     <div class="table-wrapper">
@@ -42,23 +42,20 @@
                                 {% for word in words %}
                                 <tr class="word_row">
                                     <td>
-                                        <form method="POST" action="{{ url_for('delete_word') }}" onsubmit="return confirm('Willst du dieses Wort löschen?')">
+                                        <form method="POST" action="{{ url_for('delete_word_insert') }}" onsubmit="return confirm('Willst du dieses Wort löschen?')">
                                             <input type="hidden" name="word_id" value="{{ word.id }}">
                                             <button type="submit" class="btn-id">
                                                 {{ word.user_word_id }}
                                             </button>
                                         </form>
                                     </td>
-
-                                    <td contenteditable="false"
-                                        onfocus="focusRow(this.parentElement)"
+                                    <td onfocus="focusRow(this.parentElement)"
                                         onblur="updateValueInDictionary(this, 'german_word_{{ word.id }}')"
                                         onclick="toggleVisibility(this)">
                                         <div>{{ word.german_word }}</div>
-                                        <input type="hidden" name="german_word_{{ word.id }}" value="{{ word.german_word }}">
+                                        <input type="hidden" name="german_word{{ word.id }}" value="{{ word.german_word }}">
                                     </td>
-                                    <td contenteditable="false"
-                                        onfocus="focusRow(this.parentElement)"
+                                    <td onfocus="focusRow(this.parentElement)"
                                         onblur="updateValueInDictionary(this, 'german_translated_word_{{ word.id }}')"
                                         onclick="toggleVisibility(this)">
                                         <div>{{ word.german_translated_word }}</div>
@@ -67,7 +64,7 @@
                                 </tr>
                                 {% endfor %}
                             </tbody>
-                        </table>
+                        </table>    
                     </div>
                 </form>
         </div>

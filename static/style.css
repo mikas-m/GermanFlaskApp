@@ -178,6 +178,9 @@
   animation: moveGradient 5s linear infinite;
 }
 
+.hidden-word {
+  display: none;
+}
 @keyframes moveGradient {
   0% {
     background-position: 0% 50%;
@@ -190,7 +193,19 @@
 
 
 /* search input */
-.input-search{
+.input-search-dictionary {
+  width: 95%;
+  margin-top: 10%;
+  height: 40px;
+}
+
+.input-search-irregular{
+  width: 95%;
+  margin-top: 2%;
+  height: 40px;
+}
+
+.input-search-schweiz{
   width: 95%;
   margin-top: 10%;
   height: 40px;
@@ -208,6 +223,7 @@
   align-self: center;
 }
 
+/* table standard */
 .table-standard {
   border-radius: 12px;
   overflow: hidden;
@@ -235,40 +251,29 @@
   vertical-align: middle;
 }
 
-.table-standard tbody {
-  display: block;
-  overflow-y: auto;
-  max-height: 240px;
-}
-
 .table-standard tr {
   display: table;
   width: 100%;
   table-layout: fixed;
 }
 
-.table-dictionary th:first-child,
-.table-dictionary td:first-child {
-  width: 10% !important;
-}
-
-thead th:last-child {
+.table-standard thead th:last-child {
   border-right: None !important;
 }
 
-thead th {
+.table-standard thead th {
   border-right: 1.5px solid rgb(47, 152, 201) !important;
   border-bottom: 1.5px solid rgb(47, 152, 201) !important;
   color: #ffffff !important;
   text-align: center !important;
 }
 
-thead tr {
+.table-standard thead tr {
   border-bottom: 1px solid rgb(47, 152, 201) !important;
   font-size: 100%;
 }
 
-tbody td {
+.table-standard tbody td {
   border-right: 1px solid rgb(47, 152, 201) !important;
   font-size: 80%;
 }
@@ -278,23 +283,30 @@ tbody td {
     overflow-x: auto;
 }
 
-tbody td:first-child {
+.table-standard tbody td:first-child {
   text-align: center !important;
 }
 
-tbody td:last-child {
+.table-standard tbody td:last-child {
   border-right: None !important;
 }
 
 
+/* table dictionary */
+.table-dictionary th:first-child,
+.table-dictionary td:first-child {
+  width: 10% !important;
+}
+
+.table-dictionary tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 47vh;
+}
 
 
-
-
-
-/* table irregular verbs */
-.th_irregular {
-  width: 20% !important;
+/*table irregular */
+.table-irregular th, .table-irregular td {
   text-align: center !important;
   font-size: x-small !important
 }
@@ -302,12 +314,32 @@ tbody td:last-child {
 .table-irregular tbody {
   display: block;
   overflow-y: auto;
-  max-height: 68vh;
+  max-height: 68.2vh;
 }
 
 .table-irregular th:first-child,
 .table-irregular td:first-child {
   width: 20% !important;
+}
+
+.table-irregular th:nth-child(2),
+.table-irregular td:nth-child(2) {
+  width: 17% !important;
+}
+
+.table-irregular th:nth-child(3),
+.table-irregular td:nth-child(3) {
+  width: 17% !important;
+}
+
+.table-irregular th:nth-child(4),
+.table-irregular td:nth-child(4) {
+  width: 25% !important;
+}
+
+.table-irregular th:nth-child(5),
+.table-irregular td:nth-child(5) {
+  width: 21% !important;
 }
 
 .table-irregular tbody td:first-child {
@@ -317,11 +349,17 @@ tbody td:last-child {
 
 
 /* table schweiz */
-.table-standard-schweiz tbody {
+.table-schweiz tbody {
   display: block;
   overflow-y: auto;
-  max-height: 30vh !important;
+  max-height: 38.5vh !important;
 }
+
+.table-schweiz th:first-child,
+.table-schweiz td:first-child {
+  width: 10% !important;
+}
+
 
 
 
@@ -331,6 +369,7 @@ tbody td:last-child {
   font-size: 20px;
   color:#e3e5e7;
 }
+
 .btn-id {
   background-color: transparent;
   color: white;
@@ -371,6 +410,11 @@ tbody td:last-child {
     min-height: 20vh !important;
     color: white !important;
 }
+
+
+
+
+
 
 @media (min-width: 768px) {
 
