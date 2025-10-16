@@ -51,6 +51,15 @@ class SchweizWords(SQLModel, table=True):
     schweiz_translated_german_word: str = Field(nullable=False, max_length=100)
     schweiz_translated_word: str = Field(nullable=False, max_length=100)
 
+class irregularVerbs(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    infinitive: str = Field(nullable=False, max_length=100)
+    second_third_infinitive: str = Field(nullable=False, max_length=100)
+    preterit: str = Field(nullable=False, max_length=100)
+    perfekt: str = Field(nullable=False, max_length=100)
+    translation: str = Field(nullable=False, max_length=100)
+
+
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), length(min=4, max=20)])
@@ -129,21 +138,50 @@ def resequence_user_words(session, table, user_id, word_id_field):
         setattr(word, word_id_field, index)
 
 
-
-@app.route("/delete_word", methods=["POST"])
+@app.route("/delete_word_insert", methods=["POST"])
 @login_required
-def delete_word():
+def delete_word_insert():
     word_id = request.form.get("word_id")
-    if word_id:
-        with Session(engine) as session:
+    print("Deleting word with id:", word_id)
+    with Session(engine) as session:
+        if word_id:
             word = session.get(GermanWords, int(word_id))
+            print("Word found:", word)
             if word and word.user_id == current_user.id:
                 session.delete(word)
+                session.commit()  # prvo commit da obrišeš
+                print("Word deleted, resequencing...")
                 resequence_user_words(session, GermanWords, current_user.id, "user_word_id")
-                session.commit()
+                session.commit()  # drugi commit za resequencing
+                print("Resequencing done.")
+            else:
+                print("Word not found or does not belong to user.")
+        else:
+            print("No word_id received.")
     return redirect(url_for("insert"))
 
 
+@app.route("/delete_word_schweiz", methods=["POST"])
+@login_required
+def delete_word_schweiz():
+    word_id = request.form.get("word_id")
+    print("Deleting word with id:", word_id)
+    with Session(engine) as session:
+        if word_id:
+            word = session.get(SchweizWords, int(word_id))
+            print("Word found:", word)
+            if word and word.user_id == current_user.id:
+                session.delete(word)
+                session.commit()  # prvo commit da obrišeš
+                print("Word deleted, resequencing...")
+                resequence_user_words(session, SchweizWords, current_user.id, "user_word_id")
+                session.commit()  # drugi commit za resequencing
+                print("Resequencing done.")
+            else:
+                print("Word not found or does not belong to user.")
+        else:
+            print("No word_id received.")
+    return redirect(url_for("schweiz"))
 
 #general
 @app.route("/login", methods=["GET", "POST"])
@@ -253,10 +291,12 @@ def dictionary():
 
 
 #irregular verbs view
-@app.route("/irregular", methods= ["GET", "POST"])
+@app.route("/irregular", methods=["GET", "POST"])
 @login_required
 def irregular():
-    return render_template('irregular.html')
+    with Session(engine) as session:
+        verbs = session.exec(select(irregularVerbs)).all()
+    return render_template('irregular.html', verbs=verbs)
 
 
 
@@ -310,10 +350,6 @@ def notes():
 
         except Exception as e:
             return jsonify({"error": "Database error", "details": str(e)}, 500)
-
-
-
-
 
 
 #schweiz view

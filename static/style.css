@@ -135,7 +135,7 @@
   color: #ffffffad;
   padding: 0 4vh;
   margin: 0 0.01vh;
-  margin-bottom: 3vh;
+  margin-bottom: 2.5vh;
 }
 
 .icon-link:nth-child(1) { transform: translateY(12px); margin-left: 2vh;}
@@ -147,13 +147,65 @@
 .active-icon {
   color: #fce300 !important;
   font-size: 3vh;
-  margin-bottom: 4vh;
+  margin-bottom: 2.5vh;
+}
+
+.app-name {
+  text-align: center;
+  width: 100%;
+  font-size: small;
+  color: #FFD700;
+  letter-spacing: 20%;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-shadow: 2px 2px 5px #000;
+}
+
+.btn-gradient-app-name {
+  position: relative;
+  padding: 10px 20px;
+  font-weight: bold;
+
+  background: linear-gradient(130deg, rgb(4, 134, 87), rgb(255, 138, 4), rgb(124, 1, 42));
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  border-radius: 8px;
+  border: none;
+  z-index: 1;
+  overflow: hidden;
+
+  animation: moveGradient 5s linear infinite;
+}
+
+.hidden-word {
+  display: none;
+}
+@keyframes moveGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 400% 50%;
+  }
 }
 
 
 
 /* search input */
-.input-search{
+.input-search-dictionary {
+  width: 95%;
+  margin-top: 10%;
+  height: 40px;
+}
+
+.input-search-irregular{
+  width: 95%;
+  margin-top: 2%;
+  height: 40px;
+}
+
+.input-search-schweiz{
   width: 95%;
   margin-top: 10%;
   height: 40px;
@@ -171,7 +223,8 @@
   align-self: center;
 }
 
-.table-dictionary {
+/* table standard */
+.table-standard {
   border-radius: 12px;
   overflow: hidden;
   table-layout: fixed;
@@ -179,79 +232,142 @@
   box-shadow: 2px 2px rgb(47, 152, 201);
 }
 
-.table-dictionary th, td:focus {
+.table-standard th, td:focus {
   outline: none;
   border-radius: 2% !important;
   border-color: #ffff00;
 }
 
-.table-dictionary td div{
+.table-standard td div{
   overflow-x: auto;
 }
 
-.table-dictionary thead {
+.table-standard thead {
   display: block;
 }
 
-.table-dictionary thead th {
+.table-standard thead th {
   font-size: small;
   vertical-align: middle;
 }
 
-.table-dictionary tbody {
-  display: block;
-  overflow-y: auto;
-  max-height: 400px;
-}
-
-.table-dictionary-schweiz tbody {
-  display: block;
-  overflow-y: auto;
-  max-height: 350px !important;
-}
-
-.table-dictionary tr {
+.table-standard tr {
   display: table;
   width: 100%;
   table-layout: fixed;
 }
 
-.table-dictionary th:first-child, td:first-child {
-  width: 10% !important;
-}
-
-thead th:last-child {
+.table-standard thead th:last-child {
   border-right: None !important;
 }
 
-thead th {
+.table-standard thead th {
   border-right: 1.5px solid rgb(47, 152, 201) !important;
   border-bottom: 1.5px solid rgb(47, 152, 201) !important;
   color: #ffffff !important;
   text-align: center !important;
 }
 
-thead tr {
+.table-standard thead tr {
   border-bottom: 1px solid rgb(47, 152, 201) !important;
   font-size: 100%;
 }
 
-tbody td {
+.table-standard tbody td {
   border-right: 1px solid rgb(47, 152, 201) !important;
   font-size: 80%;
 }
 
-.table-dictionary td {
+.table-standard td {
     white-space: nowrap;
     overflow-x: auto;
 }
 
-tbody td:first-child {
+.table-standard tbody td:first-child {
   text-align: center !important;
 }
 
-tbody td:last-child {
+.table-standard tbody td:last-child {
   border-right: None !important;
+}
+
+
+/* table dictionary */
+.table-dictionary th:first-child,
+.table-dictionary td:first-child {
+  width: 10% !important;
+}
+
+.table-dictionary tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 47vh;
+}
+
+
+/*table irregular */
+.table-irregular th, .table-irregular td {
+  text-align: center !important;
+  font-size: x-small !important
+}
+
+.table-irregular tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 68.2vh;
+}
+
+.table-irregular th:first-child,
+.table-irregular td:first-child {
+  width: 20% !important;
+}
+
+.table-irregular th:nth-child(2),
+.table-irregular td:nth-child(2) {
+  width: 17% !important;
+}
+
+.table-irregular th:nth-child(3),
+.table-irregular td:nth-child(3) {
+  width: 17% !important;
+}
+
+.table-irregular th:nth-child(4),
+.table-irregular td:nth-child(4) {
+  width: 25% !important;
+}
+
+.table-irregular th:nth-child(5),
+.table-irregular td:nth-child(5) {
+  width: 21% !important;
+}
+
+.table-irregular tbody td:first-child {
+  text-align:left !important;
+}
+
+
+
+/* table schweiz */
+.table-schweiz tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: 38.5vh !important;
+}
+
+.table-schweiz th:first-child,
+.table-schweiz td:first-child {
+  width: 10% !important;
+}
+
+
+
+
+.logout-fixed-icon {
+  position: fixed;
+  margin-left: 93.5%;
+  font-size: 20px;
+  color:#e3e5e7;
 }
 
 .btn-id {
@@ -294,6 +410,11 @@ tbody td:last-child {
     min-height: 20vh !important;
     color: white !important;
 }
+
+
+
+
+
 
 @media (min-width: 768px) {
 
