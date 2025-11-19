@@ -55,22 +55,19 @@
                                     </button>
                                 </form>
                             </td>
-                            <td contenteditable="true"
-                                onfocus="focusRow(this.parentElement)"
+                            <td onfocus="focusRow(this.parentElement)"
                                 onblur="updateValueInDictionary(this, 'schweiz_word_{{ word.id }}')"
                                 onclick="toggleVisibility(this)">
                                 <div>{{ word.schweiz_word }}</div>
                                 <input type="hidden" name="schweiz_word_{{ word.id }}" value="{{ word.schweiz_word }}">
                             </td>
-                            <td contenteditable="true"
-                                onfocus="focusRow(this.parentElement)"
+                            <td onfocus="focusRow(this.parentElement)"
                                 onblur="updateValueInDictionary(this, 'schweiz_translated_german_word_{{ word.id }}')"
                                 onclick="toggleVisibility(this)">
                                 <div>{{ word.schweiz_translated_german_word }}</div>
                                 <input type="hidden" name="schweiz_translated_german_word_{{ word.id }}" value="{{ word.schweiz_translated_german_word }}">
                             </td>
-                            <td contenteditable="true"
-                                onfocus="focusRow(this.parentElement)"
+                            <td onfocus="focusRow(this.parentElement)"
                                 onblur="updateValueInDictionary(this, 'schweiz_translated_word_{{ word.id }}')"
                                 onclick="toggleVisibility(this)">
                                 <div>{{ word.schweiz_translated_word }}</div>

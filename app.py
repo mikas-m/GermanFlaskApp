@@ -40,8 +40,11 @@ class Notes(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     user_note_id: int = Field(default=None, max_length=50)
     title: str = Field(nullable=False, max_length=100)
-    body: str = Field(nullable=False, max_length=500)
-    created_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column(DateTime(timezone=True)))
+    body: str = Field(nullable=False, max_length=5000)
+    created_at: datetime = Field(
+        default_factory=datetime.utcnow, 
+        sa_column=Column(DateTime(timezone=True))
+    )
 
 class SchweizWords(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -149,10 +152,10 @@ def delete_word_insert():
             print("Word found:", word)
             if word and word.user_id == current_user.id:
                 session.delete(word)
-                session.commit()  # prvo commit da obrišeš
+                session.commit()
                 print("Word deleted, resequencing...")
                 resequence_user_words(session, GermanWords, current_user.id, "user_word_id")
-                session.commit()  # drugi commit za resequencing
+                session.commit()
                 print("Resequencing done.")
             else:
                 print("Word not found or does not belong to user.")
@@ -318,38 +321,56 @@ def notes():
         body = data.get('body', '').strip()
 
         if not title or not body:
-            return jsonify({"error": "Title and body required"}, 400)
+            return jsonify({"error": "Title and body required"}), 400
+
+        with Session(engine) as session:
+            last_note = session.exec(
+                select(Notes)
+                .where(Notes.user_id == current_user.id)
+                .order_by(Notes.user_note_id.desc())
+            ).first()
+
+            last_note_id = last_note.user_note_id + 1 if last_note else 1
 
         try:
             with Session(engine) as session:
                 new_note = Notes(
                     user_id=current_user.id,
+                    user_note_id=last_note_id,
                     title=title,
-                    body=body
+                    body=body,
                 )
                 session.add(new_note)
                 session.commit()
                 session.refresh(new_note)
 
-                all_notes = session.exec(
-                    select(Notes)
-                    .where(Notes.user_id == current_user.id)
-                    .order_by(Notes.created_at.desc())
-                ).all()
-
-                notes_list = []
-                for note in all_notes:
-                    notes_list.append({
-                        "id": note.id,
-                        "title": note.title,
-                        "body": note.body,
-                        "created_at": note.created_at.isoformat() if note.created_at else None  # Handle potential None
-                    })
-
-                return jsonify(notes=notes_list), 201
+            return jsonify({"status": "ok"}), 201
 
         except Exception as e:
-            return jsonify({"error": "Database error", "details": str(e)}, 500)
+            return jsonify({"error": "Database error", "details": str(e)}), 500
+
+
+@app.route("/delete_note", methods=["POST"])
+@login_required
+def delete_note():
+    note_id = request.form.get("note_id")
+    print("Deleting note with id:", note_id)
+    with Session(engine) as session:
+        if note_id:
+            note_to_delete = session.get(Notes, note_id)
+            print("Word found:", note_to_delete)
+            if note_to_delete and note_to_delete.user_id == current_user.id:
+                session.delete(note_to_delete)
+                session.commit()
+                print("Note deleted, resequencing...")
+                session.commit()
+                print("Resequencing done.")
+            else:
+                print("Note not found or does not belong to user.")
+        else:
+            print("No note_id received.")
+    return redirect(url_for("notes"))
+
 
 
 #schweiz view
@@ -410,6 +431,8 @@ def schweiz_dictionary():
 @app.route("/")
 def golden_gate():
     return render_template('base.html')
+
+
 
 if __name__ == "__main__":
     app.run()

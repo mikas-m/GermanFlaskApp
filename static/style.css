@@ -12,6 +12,13 @@
   box-shadow: 2px 2px rgb(47, 152, 201);
 }
 
+.btn-x {
+  background-color: transparent !important;
+  color: #ffffff;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 .btn:hover {
   background-color: #ffffff !important;
   color: #000000;
@@ -411,6 +418,32 @@
     color: white !important;
 }
 
+.accordion {
+    margin-top: 2vh;
+    max-height: 75vh;
+    overflow-y: auto !important;
+}
+
+.accordion-item {
+    background-color: #4a6a8a00 !important;
+    border:none !important;
+  }
+
+.accordion-button {
+    background-color: #212529 !important;
+    color: white !important;
+    max-width: 92%;
+    margin-left: 2%;
+    height: 2vh;
+    border: 0.1ch solid rgb(47, 152, 201) !important;
+}
+
+.accordion-body {
+    background-color: #212529 !important;
+    color: white !important;
+    max-width: 85%;
+    margin-left: 5%;
+}
 
 
 

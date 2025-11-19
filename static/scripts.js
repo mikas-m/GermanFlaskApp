@@ -23,12 +23,39 @@ function initializeEventListeners() {
   }
 }
 
+// notes handling
+
+document.addEventListener("DOMContentLoaded", () => {
+  const saveBtn = document.querySelector(".bi-save");
+
+  saveBtn.addEventListener("click", async () => {
+    const title = document.getElementById("note-title").value.trim();
+    const body = document.getElementById("note-body").value.trim();
+
+    if (!title || !body) {
+      alert("Bitte gib Titel und Inhalt ein.");
+      return;
+    }
+
+    const response = await fetch("/notes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, body })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // po želji: dodaj novu bilješku u DOM bez reloada
+      location.reload(); // jednostavno rješenje
+    } else {
+      alert("Fehler: " + (data.error || "Unbekannt"));
+    }
+  });
+});
 
 
 // treba postaviti funkciju za long press i promjenu riječi u riječniku
-
-
-
 
 
 
@@ -48,6 +75,7 @@ function setupNavbarHiding() {
     el.addEventListener('blur', showNavbars);
   });
 }
+
 
 // Dictionary Update
 function updateValueInDictionary(element, inputName) {
@@ -124,54 +152,44 @@ function sanitizeId(text) {
     .substring(0, 50);
 }
 
-const saveNoteBtn = document.getElementById('saveNoteBtn');
-if (saveNoteBtn) {
-  saveNoteBtn.addEventListener('click', async () => {
-    const titleInput = document.getElementById('note-title');
-    const bodyInput = document.getElementById('note-body');
+document.addEventListener("DOMContentLoaded", function () {
+    let pressTimer = null;
+    const LONG_PRESS_DURATION = 600;  // ms
 
-    const title = titleInput.value.trim();
-    const body = bodyInput.value.trim();
+    document.querySelectorAll(".note-header").forEach(function (header) {
+        header.addEventListener("mousedown", startPress);
+        header.addEventListener("touchstart", startPress);
 
-    try {
-      const response = await fetch('/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, body })
-      });
+        header.addEventListener("mouseup", cancelPress);
+        header.addEventListener("mouseleave", cancelPress);
+        header.addEventListener("touchend", cancelPress);
+        header.addEventListener("touchcancel", cancelPress);
 
-      if (!response.ok) {
-        throw new Error('Failed to save note');
-      }
+        function startPress(e) {
+            pressTimer = setTimeout(() => {
+                const noteId = header.dataset.noteId;
+                openEditModal(noteId);
+            }, LONG_PRESS_DURATION);
+        }
 
-      const newNote = await response.json();
-      const accordion = document.getElementById('accordion-notes');
+        function cancelPress(e) {
+            clearTimeout(pressTimer);
+        }
+    });
+});
 
-      const accordionItem = document.createElement('div');
-      accordionItem.classList.add('accordion-item');
-      accordionItem.innerHTML = `
-        <h2 class="accordion-header" id="heading-${newNote.id}">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${newNote.id}" aria-expanded="false" aria-controls="collapse-${newNote.id}">
-            ${newNote.title}
-          </button>
-        </h2>
-        <div id="collapse-${newNote.id}" class="accordion-collapse collapse" aria-labelledby="heading-${newNote.id}" data-bs-parent="#accordion-notes">
-          <div class="accordion-body">
-            ${newNote.body.replace(/\n/g, '<br>')}
-          </div>
-        </div>
-      `;
+// otvaranje modala
+function openEditModal(noteId) {
+    const modal = new bootstrap.Modal(document.getElementById("editModal"));
+    document.getElementById("edit-note-id").value = noteId;
 
-      accordion.appendChild(accordionItem);
-      titleInput.value = '';
-      bodyInput.value = '';
+    // popunjavanje trenutnih vrijednosti
+    document.getElementById("edit-title").value =
+        document.getElementById(`note-title-${noteId}`).innerText.trim();
 
-      const modalEl = document.getElementById('new-card-note');
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      modal.hide();
+    document.getElementById("edit-body").value =
+        document.getElementById(`note-body-${noteId}`).innerText.trim();
 
-    } catch (error) {
-      alert('Error saving note: ' + error.message);
-    }
-  });
+    modal.show();
 }
+
