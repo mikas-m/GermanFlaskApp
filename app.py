@@ -596,6 +596,7 @@ def schweiz_insert():
 
             session.add(new_word)
             session.commit()
+            flash('Wort erfolgreich hinzugefügt!')
             logging.info(f"New Schweiz word added to database: {schweiz_word}")
             return redirect(url_for("schweiz"))
 
@@ -623,8 +624,10 @@ def delete_word_schweiz():
             resequence_user_words(session, SchweizWords, current_user.id, "user_word_id")
             session.commit()
             logging.info("Resequencing done.")
+            flash('Wort geloscht!', 'success')
         else:
             logging.warning("Schweiz Word not found or does not belong to user.")
+            flash('Das Wort wurde nicht gefunden!', 'error')
 
     return redirect(url_for("schweiz"))
 
