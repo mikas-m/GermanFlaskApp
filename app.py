@@ -2,14 +2,11 @@ import re
 import os
 from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
-from flask import Flask, render_template, url_for, redirect, request, jsonify
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from markupsafe import Markup, escape
 from dotenv import load_dotenv
 from datetime import datetime
-from flask import Flask, flash, redirect, render_template, \
-     request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, session, current_app
 import logging
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
@@ -17,12 +14,14 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, length
 
+
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 db = os.getenv("SQL_DB")
 csrf = CSRFProtect(app)
+
 
 engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
@@ -136,6 +135,7 @@ def resequence_user_words(session, table, user_id, word_id_field):
     for index, word in enumerate(words, start=1):
         setattr(word, word_id_field, index)
 
+    
 
 #general
 @app.route("/login", methods=["GET", "POST"])
@@ -170,7 +170,12 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    session.clear()
+    remember_cookie_name = current_app.config.get('REMEMBER_COOKIE_NAME', 'remember_token')
+    resp = redirect(url_for('login'))
+    resp.set_cookie(remember_cookie_name, '', expires=0)
+
+    return resp
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -197,6 +202,7 @@ def insert():
                     select(GermanWords)
                     .where(GermanWords.user_id == current_user.id)
                     .order_by(GermanWords.user_word_id.desc())
+                    .with_for_update()
                 ).first()
                 logging.debug(f"Last user word fetched successfully: {last_word}")
 
@@ -360,7 +366,7 @@ def update_word():
 
     except Exception as e:
         logging.exception("Error while updating word.")
-        return jsonify({"error": "Database error", "details": str(e)}), 500
+        return jsonify({"error": "Database error"}), 500
     
 
 
@@ -396,11 +402,12 @@ def notes():
             if not title or not body:
                 logging.warning("Missing title or body for new note.")
                 return jsonify({"error": "Bitte gib Titel und Inhalt ein."}), 400
-
+            
             try:
                 last_note_id = session.exec(
                     select(func.max(Notes.user_note_id))
                     .where(Notes.user_id == current_user.id)
+                    .with_for_update()
                 ).first()
                 logging.debug(f"Last user note fetched successfully: {last_note_id}")
 
@@ -540,7 +547,7 @@ def schweiz_insert():
 
         with Session(engine) as session:
             try:
-                last_word = session.exec(select(SchweizWords).where(SchweizWords.user_id == current_user.id).order_by(SchweizWords.user_word_id.desc())).first()
+                last_word = session.exec(select(SchweizWords).where(SchweizWords.user_id == current_user.id).order_by(SchweizWords.user_word_id.desc()).with_for_update()).first()
                 logging.debug(f"Last Schweiz user word fetched successfully: {last_word}")
             except Exception:
                 logging.exception("Error while fetching last Schweiz user word.")

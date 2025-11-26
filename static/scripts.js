@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', function () {
     autoDismissFlashAlerts(1500);
 });
 
+// CSRF helper for fetch requests
+function getCsrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : null;
+}
+
+async function fetchWithCsrf(url, options = {}) {
+    options.headers = options.headers || {};
+    const token = getCsrfToken();
+    if (token) options.headers['X-CSRFToken'] = token;
+    return fetch(url, options);
+}
+
 
 
 
@@ -220,8 +233,8 @@ function setupNoteSaving() {
         const body = document.getElementById('note-body').value.trim();
         if (!title || !body) return alert('Bitte gib Titel und Inhalt ein.');
 
-        try {
-            const response = await fetch('/notes', {
+            try {
+                const response = await fetchWithCsrf('/notes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({ title, body })
@@ -253,8 +266,8 @@ function setupEditSaving() {
 
         if (!title || !body) return alert('Bitte fülle alle Felder aus.');
 
-        try {
-            const res = await fetch('/notes/edit', {
+            try {
+                const res = await fetchWithCsrf('/notes/edit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({ id, title, body })
@@ -283,6 +296,9 @@ function setupEditSaving() {
 // ENABLE INLINE EDITING
 function enableInlineEdit(cell) {
     if (!cell) return;
+    // Safety: don't allow inline edits for irregular table cells or cells marked non-editable
+    if (cell.closest && cell.closest('.table-irregular')) return;
+    if (cell.dataset && cell.dataset.editable === 'false') return;
     console.debug('enableInlineEdit called for', cell);
 
     cell.dataset.disableToggle = '1';
@@ -326,8 +342,8 @@ function enableInlineEdit(cell) {
         finishEditing(newValue === oldValue || newValue === '');
         if (newValue === oldValue || newValue === '') return;
 
-        try {
-            const result = await fetch('/dictionary/update', {
+            try {
+                const result = await fetchWithCsrf('/dictionary/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({ id: wordId, column: column, value: newValue, table: table })
@@ -335,11 +351,11 @@ function enableInlineEdit(cell) {
 
             const data = await result.json();
             if (result.ok) {
-                await showTemporaryMessage(result.data.message || 'Saved', (result.data.category || 'success'));
-                if (result.data.reload) location.reload();
+                await showTemporaryMessage(data.message || 'Saved', (data.category || 'success'));
+                if (data.reload) location.reload();
             } else {
                 div.innerText = oldValue;
-                await showTemporaryMessage(result.data.error || 'Save failed', 'error');
+                await showTemporaryMessage(data.error || 'Save failed', 'error');
             }
         } catch (err) {
             div.innerText = oldValue;

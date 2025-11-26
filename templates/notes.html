@@ -63,6 +63,7 @@
         <form method="POST" action="{{ url_for('delete_note') }}"
               onsubmit="return confirm('Willst du diese Notiz löschen?')"
               onclick="event.stopPropagation();">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="note_id" value="{{ note.id }}">
           <button class="btn btn-x btn-outline-danger btn-sm p-1" type="submit">
             <i class="bi bi-x" style="font-size: 0.9rem;"></i>
