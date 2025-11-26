@@ -6,21 +6,23 @@ from flask import Flask, render_template, url_for, redirect, request, jsonify
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from markupsafe import Markup, escape
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, length
 from dotenv import load_dotenv
 from datetime import datetime
 from flask import Flask, flash, redirect, render_template, \
      request, url_for
 import logging
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf.csrf import CSRFProtect
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, length
 
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 db = os.getenv("SQL_DB")
+csrf = CSRFProtect(app)
 
 engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
@@ -69,6 +71,7 @@ class irregularVerbs(SQLModel, table=True):
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), length(min=4, max=20)])
     password = PasswordField('Password', validators=[DataRequired(), length(min=4, max=20)])
+    remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
 
@@ -147,7 +150,7 @@ def login():
 
             if user:
                 if check_password_hash(user.password, password):
-                    login_user(user, remember=True)
+                    login_user(user, remember=form.remember.data)
                     logging.info("User logged in: %s", username)
                     return redirect(url_for("insert"))
                 else:
@@ -157,7 +160,7 @@ def login():
                 new_user = User(username=username, password=hashed_pw)
                 session.add(new_user)
                 session.commit()
-                login_user(new_user, remember=True)
+                login_user(new_user, remember=form.remember.data)
                 logging.info("New user created and logged in: %s", username)
                 return redirect(url_for("insert"))
 
@@ -346,6 +349,7 @@ def update_word():
             if not word:
                 logging.warning("Word not found for update.")
                 return jsonify({"error": "Word not found"}), 404
+            
 
             setattr(word, column, value)
 

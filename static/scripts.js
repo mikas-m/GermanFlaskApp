@@ -1,6 +1,8 @@
 
 // MAIN INITIALIZER
+let csrfToken = null;
 document.addEventListener('DOMContentLoaded', function () {
+    csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     initializeEventListeners();
     setupNavbarHiding();
     setupLongPressEditing();
@@ -11,6 +13,27 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+
+
+
+// CSRF TOKEN SETUP FOR FETCH
+async function postJSON(url, data) {
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        return { ok: res.ok, data: json };
+    } catch (err) {
+        console.error("POST request failed:", err);
+        return { ok: false, data: { error: "Server error" } };
+    }
+}
 
 // SEARCH INPUT EVENT SETUP
 function initializeEventListeners() {
@@ -200,7 +223,7 @@ function setupNoteSaving() {
         try {
             const response = await fetch('/notes', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({ title, body })
             });
             const data = await response.json();
@@ -233,7 +256,7 @@ function setupEditSaving() {
         try {
             const res = await fetch('/notes/edit', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({ id, title, body })
             });
 
@@ -304,23 +327,19 @@ function enableInlineEdit(cell) {
         if (newValue === oldValue || newValue === '') return;
 
         try {
-            const res = await fetch('/dictionary/update', {
+            const result = await fetch('/dictionary/update', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({ id: wordId, column: column, value: newValue, table: table })
             });
 
-            const data = await res.json();
-            if (res.ok) {
-                const hiddenName = `${column}_${wordId}`;
-                const hiddenInput = document.querySelector(`input[name='${hiddenName}']`);
-                if (hiddenInput) hiddenInput.value = newValue;
-
-                await showTemporaryMessage(data.message || 'Saved', (data.category || 'success'));
-                if (data.reload) location.reload();
+            const data = await result.json();
+            if (result.ok) {
+                await showTemporaryMessage(result.data.message || 'Saved', (result.data.category || 'success'));
+                if (result.data.reload) location.reload();
             } else {
                 div.innerText = oldValue;
-                await showTemporaryMessage(data.error || data.message || 'Save failed', (data.category || 'error'));
+                await showTemporaryMessage(result.data.error || 'Save failed', 'error');
             }
         } catch (err) {
             div.innerText = oldValue;
