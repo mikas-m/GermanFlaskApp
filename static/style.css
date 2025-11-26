@@ -353,7 +353,10 @@
   text-align:left !important;
 }
 
-
+.form-control.input {
+    padding-left: 0.75rem;
+    padding-top: 0.5rem;
+}
 
 /* table schweiz */
 .table-schweiz tbody {
@@ -408,6 +411,12 @@
 }
 
 #new-card-note .modal-content {
+    min-height: 40vh !important;
+    background-color: rgba(0, 0, 0)!important;
+    border-color: white !important;
+}
+
+#edit-modal .modal-content {
     min-height: 40vh !important;
     background-color: rgba(0, 0, 0)!important;
     border-color: white !important;

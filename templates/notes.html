@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1 class="heading">dein Wörterbuch</h1>
+<h1 class="heading">deine Notizen</h1>
 <button type="button" class="btn bi-clipboard-plus btn-primary add-notes-button" 
         data-bs-toggle="modal" data-bs-target="#new-card-note"></button>
 
@@ -11,32 +11,55 @@
     <div class="modal-content">
       <div class="modal-header">
         <input class="form-control input card-title rounded-2 mb-2" 
-               type="text" autocapitalize="off" placeholder="der Titel" id="note-title" required>
+                type="text" autocapitalize="off" placeholder="der Titel" 
+                id="note-title" name="title" required>
       </div>
       <div class="modal-body">
         <textarea class="form-control input card-body rounded-2 mb-2" 
-                  autocapitalize="off" id="note-body" required></textarea>
-        <button type="button" id="saveNoteBtn" class="btn bi bi-save btn-primary"></button>
+                  autocapitalize="off" id="note-body" name="body" required></textarea>
+        <button type="button" id="saveNoteBtn" class="btn bi bi-save btn-primary"> Speichern</button>
       </div>
     </div>
   </div>
 </div>
 
 
+<!-- EDIT MODAL -->
+<div class="modal fade" id="edit-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <input class="form-control input card-title rounded-2 mb-2"
+              type="text" autocapitalize="off" id="edit-title" placeholder="der Titel" required>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control input card-body rounded-2 mb-2"
+                  autocapitalize="off" id="edit-body" required>
+        </textarea>
+        <input type="hidden" id="edit-note-id">
+        <button type="button" id="saveEditBtn" class="btn bi bi-save btn-primary"> Speichern</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 <div class="accordion" id="accordion-notes">
   {% for note in notes %}
   <div class="accordion-item">
-    
     <h2 class="accordion-header" id="heading-{{ note.id }}">
-      <div class="accordion-button collapsed d-flex align-items-center"
+      <div class="accordion-button collapsed d-flex align-items-center note-header"
+          data-note-id="{{ note.id }}"
+          data-note-title="{{ note.title }}"
+          data-note-body="{{ note.body }}"
           data-bs-toggle="collapse"
           data-bs-target="#collapse-{{ note.id }}"
           aria-expanded="false"
           aria-controls="collapse-{{ note.id }}"
           style="cursor: pointer;">
-
         <span class="flex-grow-1 w-100">{{ note.title }}</span>
-
         <form method="POST" action="{{ url_for('delete_note') }}"
               onsubmit="return confirm('Willst du diese Notiz löschen?')"
               onclick="event.stopPropagation();">
@@ -45,19 +68,17 @@
             <i class="bi bi-x" style="font-size: 0.9rem;"></i>
           </button>
         </form>
-
       </div>
     </h2>
-
-
     <div id="collapse-{{ note.id }}" class="accordion-collapse collapse"
          aria-labelledby="heading-{{ note.id }}"
          data-bs-parent="#accordion-notes">
       <div class="accordion-body">
-        {{ note.body.replace('\n', '<br>') | safe }}
+          <div id="note-title-{{ note.id }}" class="d-none">{{ note.title }}</div>
+          <div id="note-body-{{ note.id }}" class="d-none">{{ note.body }}</div>
+          {{ note.body.replace('\n', '<br>') | safe }}
       </div>
     </div>
-
   </div>
   {% endfor %}
 </div>
