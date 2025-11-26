@@ -429,9 +429,10 @@ def notes():
                     "success": True,
                     "message": "Notiz gespeichert.",
                     "category": "success",
-                    "reload": True,
+                    "reload": False,
                     "note": {
-                        "id": new_note.user_note_id,
+                        "id": new_note.id,
+                        "user_note_id": new_note.user_note_id,
                         "title": new_note.title,
                         "body": new_note.body
                     }
@@ -490,7 +491,9 @@ def edit_note():
             session.commit()
             logging.info(f"Note updated successfully: {note}")
 
-            return jsonify({"status": "ok", "message": "Notiz aktualisiert.", "category": "success", "reload": True}), 200
+            # return updated note to the client so UI can update without full reload
+            return jsonify({"status": "ok", "message": "Notiz aktualisiert.", "category": "success", "reload": False,
+                            "note": {"id": note.id, "user_note_id": note.user_note_id, "title": note.title, "body": note.body}}), 200
 
     except Exception as e:
         logging.exception("Error while editing note.")

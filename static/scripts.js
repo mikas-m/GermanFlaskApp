@@ -241,6 +241,17 @@ function setupNoteSaving() {
             });
             const data = await response.json();
             if (response.ok) {
+                // If server returned the created note, insert it into the DOM immediately
+                if (data.note) {
+                    insertNoteIntoDom(data.note);
+                    // close modal and clear inputs
+                    const modalEl = document.getElementById('new-card-note');
+                    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                    modal.hide();
+                    document.getElementById('note-title').value = '';
+                    document.getElementById('note-body').value = '';
+                }
+
                 await showTemporaryMessage(data.message || 'Notiz erstellt', (data.category || 'success'));
                 if (data.reload) location.reload();
             } else {
@@ -275,13 +286,16 @@ function setupEditSaving() {
 
             const data = await res.json();
             if (res.ok) {
-                await showTemporaryMessage(data.message || 'Notiz aktualisiert', (data.category || 'success'));
-                if (data.reload) location.reload();
-                else {
+                // If server returned updated note, update DOM in-place
+                if (data.note) {
+                    updateNoteInDom(data.note);
                     const modalEl = document.getElementById('edit-modal');
                     const instance = bootstrap.Modal.getInstance(modalEl);
                     if (instance) instance.hide();
                 }
+
+                await showTemporaryMessage(data.message || 'Notiz aktualisiert', (data.category || 'success'));
+                if (data.reload) location.reload();
             } else {
                 await showTemporaryMessage(data.error || data.message || 'Fehler', 'error');
             }
@@ -438,4 +452,117 @@ function autoDismissFlashAlerts(timeoutMs = 1500) {
             setTimeout(() => el.remove(), 350);
         }, timeoutMs);
     });
+}
+
+
+
+function insertNoteIntoDom(note) {
+    if (!note || !note.id) return;
+    const accordion = document.getElementById('accordion-notes');
+    if (!accordion) return;
+
+    const id = note.id;
+    const title = escapeHtml(note.title || '');
+    const body = escapeHtml(note.body || '').replace(/\n/g, '<br>');
+    const csrf = getCsrfToken() || '';
+
+    const html = `
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading-${id}">
+        <div class="accordion-button collapsed d-flex align-items-center note-header" 
+             data-note-id="${id}" data-note-title="${title}" data-note-body="${escapeHtml(note.body||'') }" 
+             data-bs-toggle="collapse" data-bs-target="#collapse-${id}" aria-expanded="false" aria-controls="collapse-${id}" style="cursor: pointer;">
+          <span class="flex-grow-1 w-100">${title}</span>
+          <form method="POST" action="/delete_note" onsubmit="return confirm('Willst du diese Notiz löschen?')" onclick="event.stopPropagation();">
+            <input type="hidden" name="csrf_token" value="${csrf}">
+            <input type="hidden" name="note_id" value="${id}">
+            <button class="btn btn-x btn-outline-danger btn-sm p-1" type="submit"><i class="bi bi-x" style="font-size: 0.9rem;"></i></button>
+          </form>
+        </div>
+      </h2>
+      <div id="collapse-${id}" class="accordion-collapse collapse" aria-labelledby="heading-${id}" data-bs-parent="#accordion-notes">
+        <div class="accordion-body">
+            <div id="note-title-${id}" class="d-none">${title}</div>
+            <div id="note-body-${id}" class="d-none">${escapeHtml(note.body||'')}</div>
+            ${body}
+        </div>
+      </div>
+    </div>`;
+
+    accordion.insertAdjacentHTML('afterbegin', html);
+
+    const newHeader = document.querySelector(`.note-header[data-note-id="${id}"]`);
+    if (newHeader) {
+        setupLongPressForHeader(newHeader);
+    }
+}
+
+function setupLongPressForHeader(header) {
+    const LONG_PRESS_DURATION = 600;
+    let pressTimer = null;
+    let pointerDown = false;
+
+    const startPress = (ev) => {
+        pointerDown = true;
+        if (ev && ev.preventDefault) ev.preventDefault();
+        pressTimer = setTimeout(() => {
+            if (pointerDown) openEditModal(header.dataset.noteId);
+        }, LONG_PRESS_DURATION);
+    };
+
+    const cancelPress = () => {
+        pointerDown = false;
+        clearTimeout(pressTimer);
+    };
+
+    if (window.PointerEvent) {
+        header.addEventListener('pointerdown', startPress);
+        header.addEventListener('pointerup', cancelPress);
+        header.addEventListener('pointerleave', cancelPress);
+        header.addEventListener('pointercancel', cancelPress);
+    } else {
+        header.addEventListener('mousedown', startPress);
+        header.addEventListener('mouseup', cancelPress);
+        header.addEventListener('mouseleave', cancelPress);
+        header.addEventListener('touchstart', startPress, { passive: false });
+        header.addEventListener('touchend', cancelPress);
+        header.addEventListener('touchcancel', cancelPress);
+    }
+}
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/\"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
+function updateNoteInDom(note) {
+    if (!note || !note.id) return;
+    const id = note.id;
+
+    const headerSelector = `.note-header[data-note-id="${id}"]`;
+    const header = document.querySelector(headerSelector);
+    if (header) {
+        const span = header.querySelector('span');
+        if (span) span.innerText = note.title;
+        header.dataset.noteTitle = note.title;
+        header.dataset.noteBody = note.body;
+    }
+
+    const titleEl = document.getElementById(`note-title-${id}`);
+    const bodyEl = document.getElementById(`note-body-${id}`);
+    const collapseBody = document.querySelector(`#collapse-${id} .accordion-body`);
+    if (titleEl) titleEl.innerText = note.title;
+    if (bodyEl) bodyEl.innerText = note.body;
+    if (collapseBody) {
+        // replace newlines with <br>
+        const rendered = escapeHtml(note.body || '').replace(/\n/g, '<br>');
+        // Keep the hidden markers then insert rendered content
+        const hiddenTitleHtml = `<div id="note-title-${id}" class="d-none">${escapeHtml(note.title)}</div>`;
+        const hiddenBodyHtml = `<div id="note-body-${id}" class="d-none">${escapeHtml(note.body)}</div>`;
+        collapseBody.innerHTML = hiddenTitleHtml + hiddenBodyHtml + rendered;
+    }
 }
