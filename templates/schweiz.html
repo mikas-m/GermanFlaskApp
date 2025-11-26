@@ -55,24 +55,15 @@
                                     </button>
                                 </form>
                             </td>
-                            <td contenteditable="true"
-                                onfocus="focusRow(this.parentElement)"
-                                onblur="updateValueInDictionary(this, 'schweiz_word_{{ word.id }}')"
-                                onclick="toggleVisibility(this)">
+                            <td class="editable-word" data-word-id="{{ word.id }}" data-column="schweiz_word" data-table="SchweizWords" onfocus="focusRow(this.parentElement)" onclick="toggleVisibility(this)">
                                 <div>{{ word.schweiz_word }}</div>
                                 <input type="hidden" name="schweiz_word_{{ word.id }}" value="{{ word.schweiz_word }}">
                             </td>
-                            <td contenteditable="true"
-                                onfocus="focusRow(this.parentElement)"
-                                onblur="updateValueInDictionary(this, 'schweiz_translated_german_word_{{ word.id }}')"
-                                onclick="toggleVisibility(this)">
+                            <td class="editable-word" data-word-id="{{ word.id }}" data-column="schweiz_translated_german_word" data-table="SchweizWords" onfocus="focusRow(this.parentElement)" onclick="toggleVisibility(this)">
                                 <div>{{ word.schweiz_translated_german_word }}</div>
                                 <input type="hidden" name="schweiz_translated_german_word_{{ word.id }}" value="{{ word.schweiz_translated_german_word }}">
                             </td>
-                            <td contenteditable="true"
-                                onfocus="focusRow(this.parentElement)"
-                                onblur="updateValueInDictionary(this, 'schweiz_translated_word_{{ word.id }}')"
-                                onclick="toggleVisibility(this)">
+                            <td class="editable-word" data-word-id="{{ word.id }}" data-column="schweiz_translated_word" data-table="SchweizWords" onfocus="focusRow(this.parentElement)" onclick="toggleVisibility(this)">
                                 <div>{{ word.schweiz_translated_word }}</div>
                                 <input type="hidden" name="schweiz_translated_word_{{ word.id }}" value="{{ word.schweiz_translated_word }}">
                             </td>

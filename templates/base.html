@@ -10,8 +10,23 @@
 </head>
 
 <body id="body" class="col-12 col-md-6 mx-auto d-flex flex-column" style="background-image: url('static/bg-min.png'); background-attachment: fixed; background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 100vh; opacity: 0.8; overflow: hidden; position: fixed;">
-    
     {% if current_user.is_authenticated %}
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1050; width: 320px;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% set bs_class = 'info' %}
+                    {% if category in ['success','info','warning','danger'] %}
+                        {% set bs_class = category %}
+                    {% endif %}
+                    <div class="alert alert-{{ bs_class }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
     <a class="logout-fixed-icon" href="{{ url_for('logout') }}">
         <i class="bi bi-box-arrow-left"></i>
     </a>

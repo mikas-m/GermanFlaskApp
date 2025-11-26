@@ -49,18 +49,26 @@
                                             </button>
                                         </form>
                                     </td>
-                                    <td onfocus="focusRow(this.parentElement)"
-                                        onblur="updateValueInDictionary(this, 'german_word_{{ word.id }}')"
+                                    <td class="editable-word"
+                                        data-word-id="{{ word.id }}"
+                                        data-column="german_word"
+                                        data-table="GermanWords"
+                                        onfocus="focusRow(this.parentElement)"
                                         onclick="toggleVisibility(this)">
                                         <div>{{ word.german_word }}</div>
-                                        <input type="hidden" name="german_word{{ word.id }}" value="{{ word.german_word }}">
+                                        <input type="hidden" name="german_word_{{ word.id }}" value="{{ word.german_word }}">
                                     </td>
-                                    <td onfocus="focusRow(this.parentElement)"
-                                        onblur="updateValueInDictionary(this, 'german_translated_word_{{ word.id }}')"
+
+                                    <td class="editable-word"
+                                        data-word-id="{{ word.id }}"
+                                        data-column="german_translated_word"
+                                        data-table="GermanWords"
+                                        onfocus="focusRow(this.parentElement)"
                                         onclick="toggleVisibility(this)">
                                         <div>{{ word.german_translated_word }}</div>
                                         <input type="hidden" name="german_translated_word_{{ word.id }}" value="{{ word.german_translated_word }}">
                                     </td>
+
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -72,5 +80,7 @@
 </div>
 
 <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
+
+
 
 {% endblock %}

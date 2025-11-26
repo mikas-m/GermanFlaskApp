@@ -1,177 +1,406 @@
-// DOM Ready Handler
+
+// MAIN INITIALIZER
 document.addEventListener('DOMContentLoaded', function () {
-  initializeEventListeners();
-  setupNavbarHiding();
-  setupLongPressEditing();
+    initializeEventListeners();
+    setupNavbarHiding();
+    setupLongPressEditing();
+    setupNoteSaving();
+    setupEditSaving();
+    setupLongPressEditingDictionary();
+    autoDismissFlashAlerts(1500);
 });
 
-// General Initialization
+
+
+// SEARCH INPUT EVENT SETUP
 function initializeEventListeners() {
-  const searchInputInsert = document.querySelector('#search_input_text_insert');
-  if (searchInputInsert) {
-    searchInputInsert.addEventListener('input', filterWordsDictionary);
-  }
+    const inputInsert = document.querySelector('#search_input_text_insert');
+    if (inputInsert) inputInsert.addEventListener('input', filterWordsDictionary);
 
-  const searchInputIrregular = document.querySelector('#search_input_text_irregular');
-  if (searchInputIrregular) {
-    searchInputIrregular.addEventListener('input', filterWordsIrregular);
-  }
+    const inputIrregular = document.querySelector('#search_input_text_irregular');
+    if (inputIrregular) inputIrregular.addEventListener('input', filterWordsIrregular);
 
-  const searchInputSchweiz = document.querySelector('#search_input_text_schweiz');
-  if (searchInputSchweiz) {
-    searchInputSchweiz.addEventListener('input', filterWordsSchweiz);
-  }
+    const inputSchweiz = document.querySelector('#search_input_text_schweiz');
+    if (inputSchweiz) inputSchweiz.addEventListener('input', filterWordsSchweiz);
 }
 
 
 
-// treba postaviti funkciju za long press i promjenu riječi u riječniku
-
-
-
-
-
-
-
-// Navbar Handling
-function setupNavbarHiding() {
-  function hideNavbars() {
-    document.querySelectorAll('.navbar').forEach(nav => nav.style.display = 'none');
-  }
-
-  function showNavbars() {
-    document.querySelectorAll('.navbar').forEach(nav => nav.style.display = '');
-  }
-
-  document.querySelectorAll('input, textarea, select').forEach(el => {
-    el.addEventListener('focus', hideNavbars);
-    el.addEventListener('blur', showNavbars);
-  });
-}
-
-// Dictionary Update
-function updateValueInDictionary(element, inputName) {
-  const hiddenInput = document.querySelector(`input[name='${inputName}']`);
-  if (hiddenInput) {
-    hiddenInput.value = element.innerText.trim();
-    document.querySelector('.form-dictionary').submit();
-  }
-}
-
-function focusRow(rowElement) {
-  document.querySelectorAll('.word_row').forEach(row => {
-    row.classList.remove('active-row');
-  });
-  rowElement.classList.add('active-row');
-}
-
-// Word Filtering
+// FILTER FUNCTIONS
 function filterWordsDictionary() {
-  const filter = document.querySelector('#search_input_text_insert').value.toLowerCase();
-  document.querySelectorAll('.word_row').forEach(row => {
-    const german = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
-    const translated = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
-    row.style.display = (german.includes(filter) || translated.includes(filter)) ? '' : 'none';
-  });
+    const filter = document.querySelector('#search_input_text_insert').value.toLowerCase();
+
+    document.querySelectorAll('.word_row').forEach(row => {
+        const german = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
+        const translated = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
+
+        row.style.display = (german.includes(filter) || translated.includes(filter)) ? '' : 'none';
+    });
 }
 
 function filterWordsIrregular() {
-  const filter = document.querySelector('#search_input_text_irregular').value.toLowerCase();
-  document.querySelectorAll('.word_row').forEach(row => {
-    const infinitive = row.querySelector('td:nth-child(1)').innerText.toLowerCase();
-    const second_third_infinitive = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
-    const preterit = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
-    const perfekt = row.querySelector('td:nth-child(4)').innerText.toLowerCase();
-    const translation = row.querySelector('td:nth-child(5)').innerText.toLowerCase();
-    row.style.display = (
-      infinitive.includes(filter) ||
-      second_third_infinitive.includes(filter) ||
-      preterit.includes(filter) ||
-      perfekt.includes(filter) ||
-      translation.includes(filter)
-    ) ? '' : 'none';
-  });
+    const filter = document.querySelector('#search_input_text_irregular').value.toLowerCase();
+
+    document.querySelectorAll('.word_row').forEach(row => {
+        const fields = Array.from(row.querySelectorAll('td')).map(td => td.innerText.toLowerCase());
+        row.style.display = fields.some(field => field.includes(filter)) ? '' : 'none';
+    });
 }
 
 function filterWordsSchweiz() {
-  const filter = document.querySelector('#search_input_text_schweiz').value.toLowerCase();
-  document.querySelectorAll('.word_row').forEach(row => {
-    const schweiz = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
-    const german = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
-    const translation = row.querySelector('td:nth-child(4)').innerText.toLowerCase();
-    row.style.display = (schweiz.includes(filter) || german.includes(filter) || translation.includes(filter)) ? '' : 'none';
-  });
+    const filter = document.querySelector('#search_input_text_schweiz').value.toLowerCase();
+
+    document.querySelectorAll('.word_row').forEach(row => {
+        const fields = Array.from(row.querySelectorAll('td')).map(td => td.innerText.toLowerCase());
+        row.style.display = fields.some(field => field.includes(filter)) ? '' : 'none';
+    });
 }
 
 
-function toggleVisibility(td) {
-  const div = td.querySelector('div');
-  if (div) {
-    if (div.style.display === 'none') {
-      div.style.display = 'block';
-    } else {
-      div.style.display = 'none';
-    }
-  }
+
+// NAVBAR HIDING ON INPUT FOCUS
+function setupNavbarHiding() {
+    const inputs = document.querySelectorAll('input, textarea, select');
+    if (!inputs.length) return;
+
+    const hideNavbars = () => document.querySelectorAll('.navbar').forEach(nav => nav.style.display = 'none');
+    const showNavbars = () => document.querySelectorAll('.navbar').forEach(nav => nav.style.display = '');
+
+    inputs.forEach(el => {
+        el.addEventListener('focus', hideNavbars);
+        el.addEventListener('blur', showNavbars);
+    });
 }
 
 
-function sanitizeId(text) {
-  return text.toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9\-]/g, '')
-    .substring(0, 50);
+
+// LONG PRESS INLINE EDIT FOR DICTIONARY WORDS (pointer-based)
+function setupLongPressEditingDictionary() {
+    const LONG_PRESS_DURATION = 600;
+    const editableCells = document.querySelectorAll('.editable-word');
+
+    editableCells.forEach(cell => {
+        let pressTimer = null;
+        let pointerDown = false;
+
+        const startPress = (ev) => {
+            console.debug('long-press start on', cell, 'event:', ev && ev.type);
+            if (ev && ev.preventDefault) ev.preventDefault();
+            pointerDown = true;
+            cell.style.userSelect = 'none';
+
+            pressTimer = setTimeout(() => {
+                if (pointerDown) {
+                    console.debug('long-press threshold reached for', cell);
+                    enableInlineEdit(cell);
+                }
+            }, LONG_PRESS_DURATION);
+        };
+
+        const cancelPress = () => {
+            pointerDown = false;
+            clearTimeout(pressTimer);
+            cell.style.userSelect = '';
+        };
+
+        if (window.PointerEvent) {
+            cell.addEventListener('pointerdown', startPress);
+            cell.addEventListener('pointerup', cancelPress);
+            cell.addEventListener('pointerleave', cancelPress);
+            cell.addEventListener('pointercancel', cancelPress);
+        } else {
+            cell.addEventListener('mousedown', startPress);
+            cell.addEventListener('mouseup', cancelPress);
+            cell.addEventListener('mouseleave', cancelPress);
+            cell.addEventListener('touchstart', startPress, { passive: false });
+            cell.addEventListener('touchend', cancelPress);
+            cell.addEventListener('touchcancel', cancelPress);
+        }
+
+        cell.addEventListener('dblclick', () => {
+            console.debug('dblclick triggers enableInlineEdit on', cell);
+            enableInlineEdit(cell);
+        });
+    });
 }
 
-const saveNoteBtn = document.getElementById('saveNoteBtn');
-if (saveNoteBtn) {
-  saveNoteBtn.addEventListener('click', async () => {
-    const titleInput = document.getElementById('note-title');
-    const bodyInput = document.getElementById('note-body');
 
-    const title = titleInput.value.trim();
-    const body = bodyInput.value.trim();
+
+// LONG PRESS FOR EDITING NOTES
+function setupLongPressEditing() {
+    const headers = document.querySelectorAll('.note-header');
+    if (!headers.length) return;
+
+    const LONG_PRESS_DURATION = 600;
+
+    headers.forEach(header => {
+        let pressTimer = null;
+        let pointerDown = false;
+
+        const startPress = (ev) => {
+            pointerDown = true;
+            if (ev && ev.preventDefault) ev.preventDefault();
+            pressTimer = setTimeout(() => {
+                if (pointerDown) openEditModal(header.dataset.noteId);
+            }, LONG_PRESS_DURATION);
+        };
+
+        const cancelPress = () => {
+            pointerDown = false;
+            clearTimeout(pressTimer);
+        };
+
+        if (window.PointerEvent) {
+            header.addEventListener('pointerdown', startPress);
+            header.addEventListener('pointerup', cancelPress);
+            header.addEventListener('pointerleave', cancelPress);
+            header.addEventListener('pointercancel', cancelPress);
+        } else {
+            header.addEventListener('mousedown', startPress);
+            header.addEventListener('mouseup', cancelPress);
+            header.addEventListener('mouseleave', cancelPress);
+            header.addEventListener('touchstart', startPress, { passive: false });
+            header.addEventListener('touchend', cancelPress);
+            header.addEventListener('touchcancel', cancelPress);
+        }
+    });
+}
+
+
+
+// OPEN NOTES EDIT MODAL
+function openEditModal(noteId) {
+    const modalElement = document.getElementById('edit-modal');
+    if (!modalElement) return;
+
+    const modal = new bootstrap.Modal(modalElement);
+
+    const titleEl = document.getElementById(`note-title-${noteId}`);
+    const bodyEl = document.getElementById(`note-body-${noteId}`);
+
+    document.getElementById('edit-note-id').value = noteId;
+    document.getElementById('edit-title').value = titleEl?.innerText.trim() || '';
+    document.getElementById('edit-body').value = bodyEl?.innerText.trim() || '';
+
+    modal.show();
+}
+
+
+
+// SAVE TO CREATE NEW NOTE
+function setupNoteSaving() {
+    const saveBtn = document.getElementById('saveNoteBtn');
+    if (!saveBtn) return;
+
+    saveBtn.addEventListener('click', async () => {
+        const title = document.getElementById('note-title').value.trim();
+        const body = document.getElementById('note-body').value.trim();
+        if (!title || !body) return alert('Bitte gib Titel und Inhalt ein.');
+
+        try {
+            const response = await fetch('/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, body })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                await showTemporaryMessage(data.message || 'Notiz erstellt', (data.category || 'success'));
+                if (data.reload) location.reload();
+            } else {
+                await showTemporaryMessage(data.error || data.message || 'Fehler: unbekannt', 'error');
+            }
+        } catch (err) {
+            alert('Verbindungsfehler.');
+        }
+    });
+}
+
+
+
+// SAVE TO EDIT NOTE
+function setupEditSaving() {
+    const btn = document.getElementById('saveEditBtn');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+        const id = document.getElementById('edit-note-id').value;
+        const title = document.getElementById('edit-title').value.trim();
+        const body = document.getElementById('edit-body').value.trim();
+
+        if (!title || !body) return alert('Bitte fülle alle Felder aus.');
+
+        try {
+            const res = await fetch('/notes/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, title, body })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                await showTemporaryMessage(data.message || 'Notiz aktualisiert', (data.category || 'success'));
+                if (data.reload) location.reload();
+                else {
+                    const modalEl = document.getElementById('edit-modal');
+                    const instance = bootstrap.Modal.getInstance(modalEl);
+                    if (instance) instance.hide();
+                }
+            } else {
+                await showTemporaryMessage(data.error || data.message || 'Fehler', 'error');
+            }
+        } catch (err) {
+            alert('Verbindungsfehler.');
+        }
+    });
+}
+
+
+
+// ENABLE INLINE EDITING
+function enableInlineEdit(cell) {
+    if (!cell) return;
+    console.debug('enableInlineEdit called for', cell);
+
+    cell.dataset.disableToggle = '1';
+    cell.style.userSelect = '';
+
+    const div = cell.querySelector('div');
+    if (!div) return;
+
+    const oldValue = div.innerText.trim();
+    const wordId = cell.dataset.wordId;
+    const column = cell.dataset.column;
+    const table = cell.dataset.table || 'GermanWords';
+
+    div.setAttribute('contenteditable', 'true');
+    div.focus();
 
     try {
-      const response = await fetch('/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, body })
-      });
+        const range = document.createRange();
+        range.selectNodeContents(div);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    } catch (e) {}
 
-      if (!response.ok) {
-        throw new Error('Failed to save note');
-      }
+    div.style.outline = '2px solid #17a2b8';
+    div.style.borderRadius = '4px';
+    div.style.padding = '2px 4px';
 
-      const newNote = await response.json();
-      const accordion = document.getElementById('accordion-notes');
+    const finishEditing = (revert = false) => {
+        div.removeAttribute('contenteditable');
+        div.style.outline = '';
+        div.style.padding = '';
+        delete cell.dataset.disableToggle;
+        cell.style.userSelect = '';
 
-      const accordionItem = document.createElement('div');
-      accordionItem.classList.add('accordion-item');
-      accordionItem.innerHTML = `
-        <h2 class="accordion-header" id="heading-${newNote.id}">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${newNote.id}" aria-expanded="false" aria-controls="collapse-${newNote.id}">
-            ${newNote.title}
-          </button>
-        </h2>
-        <div id="collapse-${newNote.id}" class="accordion-collapse collapse" aria-labelledby="heading-${newNote.id}" data-bs-parent="#accordion-notes">
-          <div class="accordion-body">
-            ${newNote.body.replace(/\n/g, '<br>')}
-          </div>
-        </div>
-      `;
+        if (revert) div.innerText = oldValue;
+    };
 
-      accordion.appendChild(accordionItem);
-      titleInput.value = '';
-      bodyInput.value = '';
+    const saveChanges = async () => {
+        const newValue = div.innerText.trim();
+        finishEditing(newValue === oldValue || newValue === '');
+        if (newValue === oldValue || newValue === '') return;
 
-      const modalEl = document.getElementById('new-card-note');
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      modal.hide();
+        try {
+            const res = await fetch('/dictionary/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: wordId, column: column, value: newValue, table: table })
+            });
 
-    } catch (error) {
-      alert('Error saving note: ' + error.message);
-    }
-  });
+            const data = await res.json();
+            if (res.ok) {
+                const hiddenName = `${column}_${wordId}`;
+                const hiddenInput = document.querySelector(`input[name='${hiddenName}']`);
+                if (hiddenInput) hiddenInput.value = newValue;
+
+                await showTemporaryMessage(data.message || 'Saved', (data.category || 'success'));
+                if (data.reload) location.reload();
+            } else {
+                div.innerText = oldValue;
+                await showTemporaryMessage(data.error || data.message || 'Save failed', (data.category || 'error'));
+            }
+        } catch (err) {
+            div.innerText = oldValue;
+            showTemporaryMessage('Server error', 'error');
+        }
+    };
+
+    div.addEventListener('blur', () => saveChanges(), { once: true });
+
+    const onKey = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            div.blur();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            finishEditing(true);
+            div.removeEventListener('keydown', onKey);
+        }
+    };
+
+    div.addEventListener('keydown', onKey);
+}
+
+
+
+// UTILITIES
+function toggleVisibility(td) {
+    if (td.dataset && td.dataset.disableToggle === '1') return;
+    const div = td.querySelector('div');
+    if (div) div.style.display = div.style.display === 'none' ? 'block' : 'none';
+}
+
+
+
+// MESSAGE DISPLAY
+function showTemporaryMessage(text, type = 'info', durationMs = 1500) {
+    return new Promise((resolve) => {
+        const msg = document.createElement('div');
+    msg.className = 'inline-temp-msg';
+    msg.style.position = 'fixed';
+    msg.style.right = '16px';
+    msg.style.bottom = '16px';
+    msg.style.padding = '8px 12px';
+    msg.style.borderRadius = '6px';
+    msg.style.color = '#fff';
+    msg.style.zIndex = 9999;
+    msg.style.background = type === 'success' ? '#28a745' : (type === 'error' ? '#dc3545' : '#17a2b8');
+    msg.innerText = text;
+
+        document.body.appendChild(msg);
+
+        setTimeout(() => {
+            msg.style.transition = 'opacity 300ms ease-out';
+            msg.style.opacity = '0';
+            setTimeout(() => { msg.remove(); resolve(); }, 350);
+        }, durationMs);
+    });
+}
+
+
+
+function autoDismissFlashAlerts(timeoutMs = 1500) {
+    const alerts = document.querySelectorAll('.alert.alert-dismissible');
+    if (!alerts.length) return;
+
+    alerts.forEach(el => {
+        setTimeout(() => {
+            try {
+                if (window.bootstrap && bootstrap.Alert && bootstrap.Alert.getOrCreateInstance) {
+                    const inst = bootstrap.Alert.getOrCreateInstance(el);
+                    inst.close();
+                    return;
+                }
+            } catch (e) {
+            }
+
+            el.style.transition = 'opacity 300ms ease-out, transform 300ms ease-out';
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-6px)';
+            setTimeout(() => el.remove(), 350);
+        }, timeoutMs);
+    });
 }
