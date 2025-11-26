@@ -27,7 +27,7 @@
 
         <!-- TABLE (right column on desktop only) -->
         <div class="col-12 col-md-6 px-3">
-            <input class="form-control input input-search-dictionary rounded-2 mb-2 w-100" type="text" autocapitalize="off" placeholder="suche nach dem Wort" id="search_input_text_insert" oninput="filterWordsDictionary()">
+            <input class="input form-control input-search-dictionary rounded-2 mb-2 w-100" type="text" autocapitalize="off" placeholder="suche nach dem Wort" id="search_input_text_insert" oninput="filterWordsDictionary()">
 
                 <form class="form-dictionary w-100" method="POST" action="{{ url_for('dictionary') }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

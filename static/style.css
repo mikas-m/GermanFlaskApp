@@ -40,10 +40,14 @@
   color: white;
   border-radius: 1%;
   border-color:#ffff00;
-  background-color: #2125296d;
+  background-color: #212529ec;
   box-shadow: 1px 1px #ffff00;
 }
 
+.input::placeholder {
+  color: #ffffff !important;
+  opacity: 0.5;
+}
 
 .user-input {
   background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.4));
@@ -68,8 +72,7 @@
 }
 
 .form-control::placeholder {
-  color: #ffffff !important;
-  opacity: 0.5;
+  color: #000000;
 }
 
 
@@ -348,16 +351,6 @@
   text-align:left !important;
 }
 
-.form-control::placeholder {
-    color: #ffffff !important;
-}
-
-.form-control.input {
-    padding-left: 0.75rem;
-    padding-top: 0.5rem;
-    background-color: #000 !important;
-    color:#ffffff !important;
-}
 
 /* table schweiz */
 .table-schweiz tbody {
