@@ -12,14 +12,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, length
+from wtforms.validators import DataRequired, length, EqualTo
 
 
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
-db = os.getenv("SQL_DB")
+db = os.getenv("SQL_DB") or os.getenv("DATABASE_URL") or "sqlite:///germanflaskapp.db"
 csrf = CSRFProtect(app)
 
 
@@ -72,6 +72,13 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), length(min=4, max=20)])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+
+class RegisterForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), length(min=4, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), length(min=6, max=200)])
+    confirm = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
+    submit = SubmitField('Register')
 
 
 SQLModel.metadata.create_all(engine)
@@ -155,16 +162,39 @@ def login():
                     return redirect(url_for("insert"))
                 else:
                     logging.warning("Wrong password attempt for user: %s", username)
+                    flash('Falsches Passwort', 'error')
             else:
-                hashed_pw = generate_password_hash(password)
-                new_user = User(username=username, password=hashed_pw)
-                session.add(new_user)
-                session.commit()
-                login_user(new_user, remember=form.remember.data)
-                logging.info("New user created and logged in: %s", username)
-                return redirect(url_for("insert"))
+                logging.warning("Login attempt for non-existent user: %s", username)
+                flash('Benutzer nicht gefunden — bitte registrieren', 'error')
 
     return render_template("login.html", form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        username = form.username.data.strip()
+        password = form.password.data
+
+        with Session(engine) as session:
+            existing = session.exec(select(User).where(User.username == username)).first()
+            if existing:
+                logging.warning("Attempt to register existing username: %s", username)
+                flash('Benutzername bereits vergeben', 'error')
+                return render_template('register.html', form=form)
+
+            hashed_pw = generate_password_hash(password)
+            new_user = User(username=username, password=hashed_pw)
+            session.add(new_user)
+            session.commit()
+            logging.info("New user registered: %s", username)
+            # Log the user in after successful registration
+            login_user(new_user)
+            flash('Registrierung erfolgreich — Willkommen!', 'success')
+            return redirect(url_for('insert'))
+
+    return render_template('register.html', form=form)
 
 @app.route("/logout")
 @login_required
@@ -440,7 +470,7 @@ def notes():
 
             except Exception as e:
                 session.rollback()
-                logging.exception("Error while adding new note.")
+                logging.exception("Error while adding a new note.")
                 return jsonify({"error": "Datenbankfehler"}), 500
 
 
@@ -495,9 +525,9 @@ def edit_note():
             return jsonify({"status": "ok", "message": "Notiz aktualisiert.", "category": "success", "reload": False,
                             "note": {"id": note.id, "user_note_id": note.user_note_id, "title": note.title, "body": note.body}}), 200
 
-    except Exception as e:
+    except Exception:
         logging.exception("Error while editing note.")
-        return jsonify({"error": "Database error", "details": str(e)}), 500
+        return jsonify({"error": "Server error"}), 500
 
 @app.route("/delete_note", methods=["POST"])
 @login_required 

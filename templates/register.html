@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card bg-dark text-white shadow-lg animate__animated animate__fadeInDown" style="width: 25rem;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">Registrieren</h3>
+            <form method="POST" action="{{ url_for('register') }}">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.username(class="form-control", placeholder="Benutzername", required=True) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.password(class="form-control", placeholder="Passwort", required=True) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.confirm(class="form-control", placeholder="Passwort wiederholen", required=True) }}
+                </div>
+
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-outline-info") }}
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <small>Bereits Benutzer? <a href="{{ url_for('login') }}">Zum Login</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -218,11 +218,6 @@
   height: 40px;
 }
 
-.input-search::placeholder {
-  color:#edeeee7e;
-  vertical-align:middle;
-}
-
 
 /* table */
 .form-dictionary {
@@ -353,9 +348,15 @@
   text-align:left !important;
 }
 
+.form-control::placeholder {
+    color: #ffffff !important;
+}
+
 .form-control.input {
     padding-left: 0.75rem;
     padding-top: 0.5rem;
+    background-color: #000 !important;
+    color:#ffffff !important;
 }
 
 /* table schweiz */
@@ -369,9 +370,6 @@
 .table-schweiz td:first-child {
   width: 10% !important;
 }
-
-
-
 
 .logout-fixed-icon {
   position: fixed;
