@@ -2,6 +2,20 @@
 // MAIN INITIALIZER
 let csrfToken = null;
 document.addEventListener('DOMContentLoaded', function () {
+    function isMobileDevice() {
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const screenWidth = window.innerWidth || screen.width;
+        const mobileWidth = 768;
+        return hasTouch && screenWidth <= mobileWidth;
+    }
+
+    if (!isMobileDevice()) {
+        // Avoid creating a reload loop when we're already on the unsupported page
+        if (window.location && window.location.pathname !== '/unsupported') {
+            window.location.href = "/unsupported";
+        }
+        return;
+    }
     csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     initializeEventListeners();
     setupNavbarHiding();
@@ -9,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupNoteSaving();
     setupEditSaving();
     setupLongPressEditingDictionary();
-    setupPasswordToggles();
+    setupPasswordToggles(); 
     autoDismissFlashAlerts(1500);
 });
 

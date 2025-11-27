@@ -75,6 +75,11 @@ def enforce_mobile_only():
         return redirect(url_for('unsupported'))
 
 
+@app.route('/unsupported')
+def unsupported():
+    return render_template('unsupported.html')
+
+
 class User(UserMixin, SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     username: str = Field(unique=True, nullable=False, max_length=50)
