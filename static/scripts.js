@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (!isMobileDevice()) {
-        // Avoid creating a reload loop when we're already on the unsupported page
         if (window.location && window.location.pathname !== '/unsupported') {
             window.location.href = "/unsupported";
         }
