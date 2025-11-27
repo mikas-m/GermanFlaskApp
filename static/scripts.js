@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupNoteSaving();
     setupEditSaving();
     setupLongPressEditingDictionary();
+    setupPasswordToggles();
     autoDismissFlashAlerts(1500);
 });
 
@@ -565,4 +566,35 @@ function updateNoteInDom(note) {
         const hiddenBodyHtml = `<div id="note-body-${id}" class="d-none">${escapeHtml(note.body)}</div>`;
         collapseBody.innerHTML = hiddenTitleHtml + hiddenBodyHtml + rendered;
     }
+}
+
+
+function setupPasswordToggles() {
+    const toggles = document.querySelectorAll('.btn-toggle-password');
+    if (!toggles.length) return;
+
+    toggles.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            let input = null;
+            if (btn.previousElementSibling && (btn.previousElementSibling.tagName === 'INPUT' || btn.previousElementSibling.tagName === 'TEXTAREA')) {
+                input = btn.previousElementSibling;
+            } else {
+                input = btn.closest('.input-group')?.querySelector('input') || null;
+            }
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.querySelector('i')?.classList.remove('bi-eye');
+                btn.querySelector('i')?.classList.add('bi-eye-slash');
+                btn.setAttribute('aria-pressed', 'true');
+            } else {
+                input.type = 'password';
+                btn.querySelector('i')?.classList.remove('bi-eye-slash');
+                btn.querySelector('i')?.classList.add('bi-eye');
+                btn.setAttribute('aria-pressed', 'false');
+            }
+            try { input.focus(); } catch (e) {}
+        });
+    });
 }

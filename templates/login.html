@@ -11,8 +11,11 @@
                 <div class="mb-4">
                     {{ form.username(class="form-control", id="username", required=True, placeholder="Benutzername") }}
                 </div>
-                <div class="mb-4">
+                <div class="mb-4 input-group">
                     {{ form.password(class="form-control", id="password", required=True, placeholder="Passwort") }}
+                    <button class="btn btn-outline-secondary btn-toggle-password" type="button" aria-label="Toggle password visibility" title="Show / hide password">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                    </button>
                 </div>
                 <div class="d-grid">
                     {{ form.submit(class="btn btn-outline-info") }}

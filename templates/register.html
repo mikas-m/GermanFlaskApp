@@ -13,12 +13,18 @@
                     {{ form.username(class="form-control", placeholder="Benutzername", required=True) }}
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 input-group">
                     {{ form.password(class="form-control", placeholder="Passwort", required=True) }}
+                    <button class="btn btn-outline-secondary btn-toggle-password" type="button" aria-label="Toggle password visibility" title="Show / hide password">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                    </button>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 input-group">
                     {{ form.confirm(class="form-control", placeholder="Passwort wiederholen", required=True) }}
+                    <button class="btn btn-outline-secondary btn-toggle-password" type="button" aria-label="Toggle password visibility" title="Show / hide password">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                    </button>
                 </div>
 
                 <div class="d-grid">
