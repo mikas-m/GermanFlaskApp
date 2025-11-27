@@ -2,6 +2,17 @@
 // MAIN INITIALIZER
 let csrfToken = null;
 document.addEventListener('DOMContentLoaded', function () {
+    function isMobileDevice() {
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const screenWidth = window.innerWidth || screen.width;
+        const mobileWidth = 768;
+        return hasTouch && screenWidth <= mobileWidth;
+    }
+
+    if (!isMobileDevice()) {
+        window.location.href = "/unsupported";
+        return; //
+    }
     csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     initializeEventListeners();
     setupNavbarHiding();
@@ -470,8 +481,8 @@ function insertNoteIntoDom(note) {
     const html = `
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading-${id}">
-        <div class="accordion-button collapsed d-flex align-items-center note-header" 
-             data-note-id="${id}" data-note-title="${title}" data-note-body="${escapeHtml(note.body||'') }" 
+        <div class="accordion-button collapsed d-flex align-items-center note-header"
+             data-note-id="${id}" data-note-title="${title}" data-note-body="${escapeHtml(note.body||'') }"
              data-bs-toggle="collapse" data-bs-target="#collapse-${id}" aria-expanded="false" aria-controls="collapse-${id}" style="cursor: pointer;">
           <span class="flex-grow-1 w-100">${title}</span>
           <form method="POST" action="/delete_note" onsubmit="return confirm('Willst du diese Notiz löschen?')" onclick="event.stopPropagation();">

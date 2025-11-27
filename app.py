@@ -26,54 +26,6 @@ csrf = CSRFProtect(app)
 engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
 
-app.config['MOBILE_ONLY'] = os.getenv('MOBILE_ONLY', '0') == '1'
-
-def is_mobile_user_agent(ua_string: str) -> bool:
-    if not ua_string:
-        return False
-    ua = ua_string.lower()
-
-    if 'ipad' in ua or 'tablet' in ua or 'playbook' in ua:
-        return False
-
-    desktop_tokens = ['windows nt', 'macintosh', 'x11', 'intel mac os x', 'linux x86_64', 'x86_64', 'wow64']
-    if any(tok in ua for tok in desktop_tokens):
-        return False
-
-    if 'iphone' in ua or 'ipod' in ua:
-        return True
-
-    if 'android' in ua and 'mobile' in ua:
-        return True
-
-    if 'mobile' in ua and 'tablet' not in ua:
-        return True
-
-    other_phone_tokens = ['blackberry', 'iemobile', 'windows phone', 'opera mini', 'phone']
-    if any(tok in ua for tok in other_phone_tokens):
-        return True
-
-    return False
-
-
-@app.before_request
-def enforce_mobile_only():
-    if not app.config.get('MOBILE_ONLY'):
-        return None
-
-    allowed_endpoints = {'static', 'unsupported', 'favicon'}
-
-    endpoint = request.endpoint
-    if endpoint in allowed_endpoints:
-        return None
-
-    ua = request.headers.get('User-Agent', '')
-    if is_mobile_user_agent(ua):
-        return None
-    
-    if request.endpoint != 'unsupported':
-        return redirect(url_for('unsupported'))
-
 
 class User(UserMixin, SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -94,7 +46,7 @@ class Notes(SQLModel, table=True):
     title: str = Field(nullable=False, max_length=100)
     body: str = Field(nullable=False, max_length=5000)
     created_at: datetime = Field(
-        default_factory=datetime.utcnow, 
+        default_factory=datetime.utcnow,
         sa_column=Column(DateTime(timezone=True))
     )
 
@@ -191,7 +143,7 @@ def resequence_user_words(session, table, user_id, word_id_field):
     for index, word in enumerate(words, start=1):
         setattr(word, word_id_field, index)
 
-    
+
 
 #general
 @app.route("/login", methods=["GET", "POST"])
@@ -313,13 +265,13 @@ def insert():
                 .order_by(GermanWords.user_word_id)
             ).all()
             logging.info(f"All words fetched for user: {current_user.id}")
-        
+
         except Exception:
             logging.exception("Error while fetching words for user.")
             words = []
 
         return render_template("insert.html", words=words)
-        
+
 @app.route("/delete_word_insert", methods=["POST"])
 @login_required
 def delete_word_insert():
@@ -330,7 +282,7 @@ def delete_word_insert():
         logging.warning("No word_id received.")
         flash('Keine ID!', 'error')
         return redirect(url_for("insert"))
-    
+
     try:
         word_id = int(word_id)
     except ValueError:
@@ -360,8 +312,8 @@ def delete_word_insert():
 @login_required
 def dictionary():
     return update_value(
-        route_name="insert",             
-        html="insert.html",                  
+        route_name="insert",
+        html="insert.html",
         table=GermanWords,
         first_form_word="german_word",
         second_form_word="german_translated_word",
@@ -379,7 +331,7 @@ def update_word():
     column = data.get("column")
     value = data.get("value", "").strip()
     table_name = data.get("table", "GermanWords")
-    
+
     if not word_id or not column:
         logging.warning("Missing parameters for update_word.")
         return jsonify({"error": "Missing parameters"}), 400
@@ -434,7 +386,7 @@ def update_word():
             if not word:
                 logging.warning("Word not found for update.")
                 return jsonify({"error": "Word not found"}), 404
-            
+
 
             setattr(word, column, value)
 
@@ -446,7 +398,7 @@ def update_word():
     except Exception as e:
         logging.exception("Error while updating word.")
         return jsonify({"error": "Database error"}), 500
-    
+
 
 
 #irregular verbs view
@@ -472,7 +424,7 @@ def notes():
     with Session(engine) as session:
 
         if request.method == "POST":
-            
+
             data = request.get_json(silent=True) or {}
 
             title = data.get("title", "").strip()
@@ -481,7 +433,7 @@ def notes():
             if not title or not body:
                 logging.warning("Missing title or body for new note.")
                 return jsonify({"error": "Bitte gib Titel und Inhalt ein."}), 400
-            
+
             try:
                 last_note_id = session.exec(
                     select(func.max(Notes.user_note_id))
@@ -491,7 +443,7 @@ def notes():
                 logging.debug(f"Last user note fetched successfully: {last_note_id}")
 
                 last_note_id = (last_note_id or 0) + 1
-                logging.info(f"Last user note id determined: {last_note_id}")   
+                logging.info(f"Last user note id determined: {last_note_id}")
 
                 new_note = Notes(
                     user_id=current_user.id,
@@ -536,7 +488,7 @@ def notes():
 def edit_note():
     data = request.get_json()
     note_id = data.get("id")
-   
+
     if note_id:
         try:
             note_id = int(note_id)
@@ -579,7 +531,7 @@ def edit_note():
         return jsonify({"error": "Server error"}), 500
 
 @app.route("/delete_note", methods=["POST"])
-@login_required 
+@login_required
 def delete_note():
     note_id = request.form.get("note_id")
     try:
@@ -661,7 +613,7 @@ def delete_word_schweiz():
     except (ValueError, TypeError):
         logging.warning("Invalid word_id format for delete_word_schweiz.")
         return redirect(url_for("schweiz"))
-    
+
     with Session(engine) as session:
         word = session.get(SchweizWords, int(word_id))
         logging.debug(f"Schweiz Word found: {word}")
