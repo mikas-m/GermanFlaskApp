@@ -36,8 +36,24 @@ def is_mobile_user_agent(ua_string: str) -> bool:
     if 'ipad' in ua or 'tablet' in ua or 'playbook' in ua:
         return False
 
-    phone_indicators = ['mobile', 'iphone', 'ipod', 'blackberry', 'iemobile', 'windows phone', 'opera mini', 'android']
-    return any(tok in ua for tok in phone_indicators)
+    desktop_tokens = ['windows nt', 'macintosh', 'x11', 'intel mac os x', 'linux x86_64', 'x86_64', 'wow64']
+    if any(tok in ua for tok in desktop_tokens):
+        return False
+
+    if 'iphone' in ua or 'ipod' in ua:
+        return True
+
+    if 'android' in ua and 'mobile' in ua:
+        return True
+
+    if 'mobile' in ua and 'tablet' not in ua:
+        return True
+
+    other_phone_tokens = ['blackberry', 'iemobile', 'windows phone', 'opera mini', 'phone']
+    if any(tok in ua for tok in other_phone_tokens):
+        return True
+
+    return False
 
 
 @app.before_request
