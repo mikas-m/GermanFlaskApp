@@ -26,6 +26,39 @@ csrf = CSRFProtect(app)
 engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
 
+app.config['MOBILE_ONLY'] = os.getenv('MOBILE_ONLY', '0') == '1'
+
+def is_mobile_user_agent(ua_string: str) -> bool:
+    if not ua_string:
+        return False
+    ua = ua_string.lower()
+
+    if 'ipad' in ua or 'tablet' in ua or 'playbook' in ua:
+        return False
+
+    phone_indicators = ['mobile', 'iphone', 'ipod', 'blackberry', 'iemobile', 'windows phone', 'opera mini', 'android']
+    return any(tok in ua for tok in phone_indicators)
+
+
+@app.before_request
+def enforce_mobile_only():
+    if not app.config.get('MOBILE_ONLY'):
+        return None
+
+    allowed_endpoints = {'static', 'unsupported', 'favicon'}
+
+    endpoint = request.endpoint
+    if endpoint in allowed_endpoints:
+        return None
+
+    ua = request.headers.get('User-Agent', '')
+    if is_mobile_user_agent(ua):
+        return None
+    
+    if request.endpoint != 'unsupported':
+        return redirect(url_for('unsupported'))
+
+
 class User(UserMixin, SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     username: str = Field(unique=True, nullable=False, max_length=50)
