@@ -28,56 +28,7 @@ engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
 app.config['MOBILE_ONLY'] = os.getenv('MOBILE_ONLY', '0') == '1'
 
-def is_mobile_user_agent(ua_string: str) -> bool:
-    if not ua_string:
-        return False
-    ua = ua_string.lower()
 
-    if 'ipad' in ua or 'tablet' in ua or 'playbook' in ua:
-        return False
-
-    desktop_tokens = ['windows nt', 'macintosh', 'x11', 'intel mac os x', 'linux x86_64', 'x86_64', 'wow64']
-    if any(tok in ua for tok in desktop_tokens):
-        return False
-
-    if 'iphone' in ua or 'ipod' in ua:
-        return True
-
-    if 'android' in ua and 'mobile' in ua:
-        return True
-
-    if 'mobile' in ua and 'tablet' not in ua:
-        return True
-
-    other_phone_tokens = ['blackberry', 'iemobile', 'windows phone', 'opera mini', 'phone']
-    if any(tok in ua for tok in other_phone_tokens):
-        return True
-
-    return False
-
-
-@app.before_request
-def enforce_mobile_only():
-    if not app.config.get('MOBILE_ONLY'):
-        return None
-
-    allowed_endpoints = {'static', 'unsupported', 'favicon'}
-
-    endpoint = request.endpoint
-    if endpoint in allowed_endpoints:
-        return None
-
-    ua = request.headers.get('User-Agent', '')
-    if is_mobile_user_agent(ua):
-        return None
-    
-    if request.endpoint != 'unsupported':
-        return redirect(url_for('unsupported'))
-
-
-@app.route('/unsupported')
-def unsupported():
-    return render_template('unsupported.html')
 
 
 class User(UserMixin, SQLModel, table=True):
@@ -199,6 +150,10 @@ def resequence_user_words(session, table, user_id, word_id_field):
     
 
 #general
+@app.route('/unsupported')
+def unsupported():
+    return render_template('unsupported.html')
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
