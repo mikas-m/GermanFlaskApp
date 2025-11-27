@@ -10,8 +10,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (!isMobileDevice()) {
+<<<<<<< HEAD
         window.location.href = "/unsupported";
         return; //
+=======
+        if (window.location && window.location.pathname !== '/unsupported') {
+            window.location.href = "/unsupported";
+        }
+        return;
+>>>>>>> dae0b22db5d8a28c9f204dfe4e4b557cba901ceb
     }
     csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     initializeEventListeners();

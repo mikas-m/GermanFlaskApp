@@ -26,10 +26,16 @@ csrf = CSRFProtect(app)
 engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
 
+<<<<<<< HEAD
 
 @app.route('/unsupported')
 def unsupported():
     return render_template('unsupported.html')
+=======
+app.config['MOBILE_ONLY'] = os.getenv('MOBILE_ONLY', '0') == '1'
+
+
+>>>>>>> dae0b22db5d8a28c9f204dfe4e4b557cba901ceb
 
 
 class User(UserMixin, SQLModel, table=True):
@@ -151,6 +157,10 @@ def resequence_user_words(session, table, user_id, word_id_field):
 
 
 #general
+@app.route('/unsupported')
+def unsupported():
+    return render_template('unsupported.html')
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
