@@ -27,6 +27,11 @@ engine = create_engine(db, echo=False, pool_recycle=280, pool_pre_ping=True)
 
 
 
+@app.route('/unsupported')
+def unsupported():
+    return render_template('unsupported.html')
+
+
 class User(UserMixin, SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     username: str = Field(unique=True, nullable=False, max_length=50)
